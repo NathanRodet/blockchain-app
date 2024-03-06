@@ -1,5 +1,13 @@
 # blockchain-app
 
+## Developement installation
+
+```bash
+npm install --save-dev hardhat
+npm install --save-dev ts-node typescript
+npm install --save-dev chai@4 @types/node @types/mocha @types/chai@4
+```
+
 ## 1 - Project overview
 
 You are part of SupRailRoad & co and as such are task to provide a PoC for a solution being designed to be use by all people using the company (train, subway, bus ...)
