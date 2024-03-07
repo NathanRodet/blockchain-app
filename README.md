@@ -1,12 +1,38 @@
 # blockchain-app
 
-## Developement installation
+## Quick start
+
+The first things you need to do are cloning this repository and installing its dependencies:
 
 ```bash
-npm install --save-dev hardhat
-npm install --save-dev ts-node typescript
-npm install --save-dev chai@4 @types/node @types/mocha @types/chai@4
+git clone https://github.com/NathanRodet/blockchain-app.git
+cd blockchain-app
+npm install
 ```
+
+Once installed, let's run Hardhat's testing network:
+
+```bash
+npx hardhat node
+```
+
+Then, on a new terminal, go to the repository's root folder and run this to deploy your contract:
+
+```bash
+npx hardhat run scripts/deploy.js --network localhost
+```
+
+Finally, we can run the frontend with:
+
+```bash
+npm install -g @angular/cli
+cd frontend
+npm install
+ng serve --open
+```
+
+> If you are running on Windows, you should run this command.  
+> `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`
 
 ## 1 - Project overview
 
