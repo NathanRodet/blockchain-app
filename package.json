@@ -4,7 +4,10 @@
   "description": "## 1 - Project overview",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npx hardhat compile",
+    "deploy": "npx hardhat run scripts/deploy.ts --network ganache",
+    "test": "npx hardhat test",
+    "ganache": "ganache --wallet.seed myCustomSeed"
   },
   "keywords": [],
   "author": "",
@@ -14,9 +17,14 @@
     "@types/chai": "^4.3",
     "@types/mocha": "^10.0",
     "@types/node": "^20.11",
-    "chai": "^4.4",
+    "chai": "^4.4.1",
     "hardhat": "^2.21",
+    "mocha": "^10.3.0",
     "ts-node": "^10.9",
     "typescript": "^5.3"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.2",
+    "ganache": "^7.9.2"
   }
 }
