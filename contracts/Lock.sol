@@ -1,34 +1,76 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.24;
+//SPDX-License-Identifier: UNLICENSED
 
-// Uncomment this line to use console.log
-// import "hardhat/console.sol";
+// Solidity files have to start with this pragma.
+// It will be used by the Solidity compiler to validate its version.
+pragma solidity ^0.8.9;
 
-contract Lock {
-    uint public unlockTime;
-    address payable public owner;
+// We import this library to be able to use console.log
+import "hardhat/console.sol";
 
-    event Withdrawal(uint amount, uint when);
+contract Token {
+    // Some string type variables to identify the token.
+    string public name = "My Hardhat Token";
+    string public symbol = "MHT";
 
-    constructor(uint _unlockTime) payable {
-        require(
-            block.timestamp < _unlockTime,
-            "Unlock time should be in the future"
-        );
+    // The fixed amount of tokens stored in an unsigned integer type variable.
+    uint256 public totalSupply = 1000000;
 
-        unlockTime = _unlockTime;
-        owner = payable(msg.sender);
+    // An address type variable is used to store ethereum accounts.
+    address public owner;
+
+    // A mapping is a key/value map. Here we store each account balance.
+    mapping(address => uint256) balances;
+
+    // The Transfer event helps off-chain aplications understand
+    // what happens within your contract.
+    event Transfer(address indexed _from, address indexed _to, uint256 _value);
+
+    /**
+     * Contract initialization.
+     */
+    constructor() {
+        // The totalSupply is assigned to the transaction sender, which is the
+        // account that is deploying the contract.
+        balances[msg.sender] = totalSupply;
+        owner = msg.sender;
     }
 
-    function withdraw() public {
-        // Uncomment this line, and the import of "hardhat/console.sol", to print a log in your terminal
-        // console.log("Unlock time is %o and block timestamp is %o", unlockTime, block.timestamp);
+    /**
+     * A function to transfer tokens.
+     *
+     * The `external` modifier makes a function *only* callable from outside
+     * the contract.
+     */
+    function transfer(address to, uint256 amount) external {
+        // Check if the transaction sender has enough tokens.
+        // If `require`'s first argument evaluates to `false` then the
+        // transaction will revert.
+        require(balances[msg.sender] >= amount, "Not enough tokens");
 
-        require(block.timestamp >= unlockTime, "You can't withdraw yet");
-        require(msg.sender == owner, "You aren't the owner");
+        // We can print messages and values using console.log, a feature of
+        // Hardhat Network:
+        console.log(
+            "Transferring from %s to %s %s tokens",
+            msg.sender,
+            to,
+            amount
+        );
 
-        emit Withdrawal(address(this).balance, block.timestamp);
+        // Transfer the amount.
+        balances[msg.sender] -= amount;
+        balances[to] += amount;
 
-        owner.transfer(address(this).balance);
+        // Notify off-chain applications of the transfer.
+        emit Transfer(msg.sender, to, amount);
+    }
+
+    /**
+     * Read only function to retrieve the token balance of a given account.
+     *
+     * The `view` modifier indicates that it doesn't modify the contract's
+     * state, which allows us to call it without executing a transaction.
+     */
+    function balanceOf(address account) external view returns (uint256) {
+        return balances[account];
     }
 }
