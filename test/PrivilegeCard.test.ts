@@ -26,6 +26,14 @@ describe("PrivilegeCard", function () {
       await privilegeCard.removeAdmin(addr1Address);
       expect(await privilegeCard.admins(addr1Address)).to.equal(false);
     });
+
+    it("Should revert if non-admin tries to call admin-only function", async function () {
+      const [owner, addr1] = await ethers.getSigners();
+      const PrivilegeCard = await ethers.getContractFactory("PrivilegeCard");
+      const privilegeCard = await PrivilegeCard.connect(owner).deploy();
+
+      await expect(privilegeCard.connect(addr1).addAdmin(await addr1.getAddress())).to.be.revertedWith("Caller is not an admin");
+    });
   });
 
   describe("Card Management", function () {
@@ -50,6 +58,17 @@ describe("PrivilegeCard", function () {
       await privilegeCard.connect(addr1).buyCard(1, { value: ethers.parseEther("1") });
       await privilegeCard.connect(addr1).transferCard(1, await addr2.getAddress());
       expect(await privilegeCard.ownerOf(1)).to.equal(await addr2.getAddress());
+    });
+
+    it("Should throw a quantity exception when quantity is not at least 1", async function () {
+      await expect(privilegeCard.createCard("Invalid Card", ethers.parseEther("1"), 0, 0, "http://0nlyF@n-MYM.com/HERE-COMES-THE-MONEY.png", "Invalid Card Description")).to.be.revertedWith("Quantity must be at least 1");
+    });
+
+    it("Should throw an exception when non-owner tries to transfer a card", async function () {
+      await privilegeCard.createCard("Gold", ethers.parseEther("1"), 0, 10, "http://0nlyF@n-MYM.com/HERE-COMES-THE-MONEY.png", "Gold Card Description");
+      await privilegeCard.connect(addr1).buyCard(1, { value: ethers.parseEther("1") });
+
+      await expect(privilegeCard.connect(addr2).transferCard(1, await addr2.getAddress())).to.be.revertedWith("You are not the owner of this card");
     });
   });
 });
