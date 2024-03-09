@@ -18,6 +18,8 @@ contract Ticket is ERC721Enumerable {
     mapping(uint256 => TicketInfo) public tickets;
     mapping(address => bool) public admins;
 
+    event AdminAdded(address indexed newAdmin);
+    event AdminRemoved(address indexed removedAdmin);
     event TicketCreated(uint256 indexed ticketId, string name);
     event TicketBought(uint256 indexed ticketId, address indexed buyer);
 
@@ -26,7 +28,19 @@ contract Ticket is ERC721Enumerable {
         _;
     }
 
+    function addAdmin(address admin) public onlyAdmin {
+        admins[admin] = true;
+        emit AdminAdded(admin);
+    }
+
+    function removeAdmin(address admin) public onlyAdmin {
+        admins[admin] = false;
+        emit AdminRemoved(admin);
+    }
+
     constructor() ERC721("Ticket", "TCKTPRC") {
+        admins[msg.sender] = true;
+
         ticketPrice[TicketPrice.Bus] = 1;
         ticketPrice[TicketPrice.Subway] = 2;
         ticketPrice[TicketPrice.Train] = 3;
@@ -41,6 +55,7 @@ contract Ticket is ERC721Enumerable {
     function buyTicket(uint256 ticketId) public payable {
         require(msg.value >= ticketPrice[TicketPrice(ticketId)], "Ether sent is not enough");
         
+
         _safeMint(msg.sender, ticketId);
         emit TicketBought(ticketId, msg.sender);
     }
