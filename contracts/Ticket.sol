@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
+import "hardhat/console.sol";
 
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+contract Tickets  {
+    enum TicketType { Train, Bus, Subway }
+    mapping(TicketType => uint256) private defaultTicketPrice;
 
-contract Ticket is ERC721Enumerable {
-    enum TicketPrice { Train, Bus, Subway }
-    mapping(TicketPrice => uint256) private ticketPrice;
-
-    struct TicketInfo {
+    struct Ticket {
         string name;
-        TicketPrice ticketPrice;
+        TicketType ticketType;
         string imageUrl;
         string description;
+        bool isUsed;
     }
 
     uint256 private _nextTicketId = 1;
-    mapping(uint256 => TicketInfo) public tickets;
+    mapping(uint256 => Ticket) public tickets;
     mapping(address => bool) public admins;
 
     event AdminAdded(address indexed newAdmin);
@@ -38,25 +38,29 @@ contract Ticket is ERC721Enumerable {
         emit AdminRemoved(admin);
     }
 
-    constructor() ERC721("Ticket", "TCKTPRC") {
+    constructor() {
         admins[msg.sender] = true;
 
-        ticketPrice[TicketPrice.Bus] = 1;
-        ticketPrice[TicketPrice.Subway] = 2;
-        ticketPrice[TicketPrice.Train] = 3;
+        defaultTicketPrice[TicketType.Bus] = 1;
+        defaultTicketPrice[TicketType.Subway] = 2;
+        defaultTicketPrice[TicketType.Train] = 3;
     }
 
-    function createTicket(string memory name, TicketPrice ticketPrice, string memory imageUrl, string memory description) public onlyAdmin {
-        tickets[_nextTicketId] = TicketInfo(name, ticketPrice, imageUrl, description);
+    // TODO: Calculate the price of the ticket with the biggest reduction available
+
+
+    function createTicket(string memory name, TicketType ticketType, string memory imageUrl, string memory description) public onlyAdmin {
+        tickets[_nextTicketId] = Ticket(name, ticketType, imageUrl, description, false);
+        
         emit TicketCreated(_nextTicketId, name);
         _nextTicketId++;
     }
 
     function buyTicket(uint256 ticketId) public payable {
-        require(msg.value >= ticketPrice[TicketPrice(ticketId)], "Ether sent is not enough");
-        
+        require(msg.value >= defaultTicketPrice[TicketType(ticketId)], "The Ether does not match the price of the item");
 
-        _safeMint(msg.sender, ticketId);
+        // TODO: Require the price with the biggest reduction available for a ticket to be bought
+
         emit TicketBought(ticketId, msg.sender);
     }
 
