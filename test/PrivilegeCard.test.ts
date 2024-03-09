@@ -49,7 +49,11 @@ describe("PrivilegeCard", function () {
 
     it("Should allow a user to buy a card", async function () {
       await privilegeCard.createCard("Gold", ethers.parseEther("1"), 0, 10, "http://0nlyF@n-MYM.com/HERE-COMES-THE-MONEY.png", "Discount Card Description");
+      const oldBalanceAddr1 = await ethers.provider.getBalance(addr1);
+      console.log(`Balance of addr1 before purchasing the card: ${ethers.formatEther(oldBalanceAddr1)} ETH`);
       await privilegeCard.connect(addr1).buyCard(1, { value: ethers.parseEther("1") });
+      const newBalanceAddr1 = await ethers.provider.getBalance(addr1);
+      console.log(`Balance of addr1 after purchasing the card: ${ethers.formatEther(newBalanceAddr1)} ETH`);
       expect(await privilegeCard.ownerOf(1)).to.equal(await addr1.getAddress());
     });
 
