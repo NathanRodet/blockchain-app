@@ -71,4 +71,46 @@ describe("PrivilegeCard", function () {
       await expect(privilegeCard.connect(addr2).transferCard(1, await addr2.getAddress())).to.be.revertedWith("You are not the owner of this card");
     });
   });
+
+  describe("PrivilegeCard Ownership Features", function () {
+    beforeEach(async function () {
+      await privilegeCard.addAdmin(await owner.getAddress());
+      await privilegeCard.createCard("Gold", ethers.parseEther("1"), 0, 100, "http://0nlyF@n-MYM.com/gold.png", "Gold Card Description");
+    });
+
+    it("Should track owned cards after purchase", async function () {
+      await privilegeCard.connect(addr1).buyCard(1, { value: ethers.parseEther("1") });
+      const ownedCards = await privilegeCard.getOwnedCards(await addr1.getAddress());
+      expect(ownedCards.length).to.equal(1);
+      expect(ownedCards[0].name).to.equal('Gold');
+    });
+
+    it("Should update owned cards correctly after a transfer", async function () {
+      await privilegeCard.connect(addr1).buyCard(1, { value: ethers.parseEther("1") });
+      await privilegeCard.connect(addr1).transferCard(1, await addr2.getAddress());
+
+      const ownedByAddr1 = await privilegeCard.getOwnedCards(await addr1.getAddress());
+      const ownedByAddr2 = await privilegeCard.getOwnedCards(await addr2.getAddress());
+
+      expect(ownedByAddr1.length).to.equal(0);
+      expect(ownedByAddr2.length).to.equal(1);
+      expect(ownedByAddr2[0].imageUrl).to.equal('http://0nlyF@n-MYM.com/gold.png');
+    });
+
+    it("Should correctly track multiple card purchases by the same user", async function () {
+      await privilegeCard.createCard("Silver", ethers.parseEther("0.5"), 0, 10, "http://0nlyF@n-MYM.com/silver.png", "Silver Card Description");
+      await privilegeCard.createCard("Bronze", ethers.parseEther("0.2"), 0, 10, "http://0nlyF@n-MYM.com/bronze.png", "Bronze Card Description");
+
+      await privilegeCard.connect(addr1).buyCard(1, { value: ethers.parseEther("1") });
+      await privilegeCard.connect(addr1).buyCard(2, { value: ethers.parseEther("0.5") });
+      await privilegeCard.connect(addr1).buyCard(3, { value: ethers.parseEther("0.2") });
+
+      const ownedCardsStructs = await privilegeCard.getOwnedCards(await addr1.getAddress());
+      const ownedCardNames = ownedCardsStructs.map(card => card.name);
+
+      expect(ownedCardNames).to.include("Gold");
+      expect(ownedCardNames).to.include("Silver");
+      expect(ownedCardNames).to.include("Bronze");
+    });
+  });
 });
