@@ -20,11 +20,15 @@ contract PrivilegeCard is ERC721Enumerable {
     mapping(uint256 => Card) public cards;
     mapping(address => bool) public admins;
 
+    mapping(address => uint256[]) private ownedCards;
+    mapping(uint256 => uint256) private ownedCardsIndex;
+
     event AdminAdded(address indexed newAdmin);
     event AdminRemoved(address indexed removedAdmin);
     event CardCreated(uint256 indexed cardId, string name, uint256 quantity);
     event CardBought(uint256 indexed cardId, address indexed buyer, uint256 quantityLeft);
     event CardTransferred(uint256 indexed cardId, address indexed from, address indexed to);
+    event RefundIssued(address indexed buyer, uint256 amount);
 
     modifier onlyAdmin() {
         require(admins[msg.sender], "Caller is not an admin");
@@ -59,17 +63,52 @@ contract PrivilegeCard is ERC721Enumerable {
 
     function buyCard(uint256 cardId) public payable {
         require(cards[cardId].quantity > 0, "Card is sold out");
-        uint256 cardPrice = cards[cardId].price;
-        require(msg.value >= cardPrice, "Ether sent is not enough");
+        require(msg.value >= cards[cardId].price, "Ether sent is not enough");
+
+        Card storage card = cards[cardId];
+        card.quantity = card.quantity - 1;
         
-        cards[cardId].quantity -= 1;
+        ownedCards[msg.sender].push(cardId);
+        ownedCardsIndex[cardId] = ownedCards[msg.sender].length - 1;
+
         _safeMint(msg.sender, cardId);
-        emit CardBought(cardId, msg.sender, cards[cardId].quantity);
+        emit CardBought(cardId, msg.sender, card.quantity);
+
+        uint256 excessPayment = msg.value - card.price;
+        if (excessPayment > 0) {
+            payable(msg.sender).transfer(excessPayment);
+            emit RefundIssued(msg.sender, excessPayment);
+        }
+    }
+
+    function getOwnedCards(address owner) public view returns (Card[] memory) {
+        uint256[] storage cardIds = ownedCards[owner];
+        Card[] memory cardsArray = new Card[](cardIds.length);
+
+        for (uint256 i = 0; i < cardIds.length; i++) {
+            cardsArray[i] = cards[cardIds[i]];
+        }
+
+        return cardsArray;
     }
 
     function transferCard(uint256 cardId, address to) public {
         require(ownerOf(cardId) == msg.sender, "You are not the owner of this card");
         _transfer(msg.sender, to, cardId);
+
+        uint256 lastCardIndex = ownedCards[msg.sender].length - 1;
+        uint256 cardIndex = ownedCardsIndex[cardId];
+        if (cardIndex != lastCardIndex) {
+            uint256 lastCardId = ownedCards[msg.sender][lastCardIndex];
+            ownedCards[msg.sender][cardIndex] = lastCardId;
+            ownedCardsIndex[lastCardId] = cardIndex;
+        }
+        ownedCards[msg.sender].pop();
+        delete ownedCardsIndex[cardId];
+
+        ownedCards[to].push(cardId);
+        ownedCardsIndex[cardId] = ownedCards[to].length - 1;
+
         emit CardTransferred(cardId, msg.sender, to);
     }
 }
