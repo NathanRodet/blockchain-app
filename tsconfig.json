@@ -8,6 +8,8 @@
     "skipLibCheck": true,
     "resolveJsonModule": true
   },
-  "include": ["./src", "./scripts"],
+  "exclude": ["dist", "node_modules"],
+  "include": ["./test", "./src", "./scripts"],
   "files": ["./hardhat.config.ts"]
 }
+
