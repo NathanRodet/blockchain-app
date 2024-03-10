@@ -10,17 +10,19 @@ export class AuthService {
   async login(address: string): Promise<boolean> {
     if (ethers.isAddress(address)) {
       localStorage.setItem('currentUser', JSON.stringify({ address: address }));
+      window.location.replace('')
       return true;
     } else {
       return false;
     }
   }
 
-  isLoggedIn(): boolean {
+  public isLoggedIn(): boolean {
     return !!localStorage.getItem('currentUser');
   }
 
-  logout(): void {
+  public logout(): void {
     localStorage.removeItem('currentUser');
+    window.location.replace('/login')
   }
 }

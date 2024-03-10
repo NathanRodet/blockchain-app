@@ -4,19 +4,19 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app.routes';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './auth/login/login.component';
-import { AuthService } from './auth/auth.service';
+import { AuthService } from './services/auth.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr'; 
+import { AuthModule } from './auth/auth.module';
 
 @NgModule({
   declarations: [
-    LoginComponent,
   ],
   imports: [
     BrowserModule,
     CommonModule,
     FormsModule,
+    AuthModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot({
