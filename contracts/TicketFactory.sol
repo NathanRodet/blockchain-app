@@ -47,4 +47,19 @@ contract TicketFactory is PrivilegeCard {
   function listTickets(address buyer) public view returns (Ticket[] memory) {
     return tickets[buyer];
   }
+
+  function listAvailableTickets() public view returns (TicketType[] memory, uint256[] memory) {
+    TicketType[] memory availableTickets = new TicketType[](3);
+    uint256[] memory ticketPrices = new uint256[](3);
+
+    availableTickets[0] = TicketType.Train;
+    availableTickets[1] = TicketType.Bus;
+    availableTickets[2] = TicketType.Subway;
+
+    ticketPrices[0] = defaultTicketPrice[TicketType.Train];
+    ticketPrices[1] = defaultTicketPrice[TicketType.Bus];
+    ticketPrices[2] = defaultTicketPrice[TicketType.Subway];
+
+    return (availableTickets, ticketPrices);
+  }
 }
