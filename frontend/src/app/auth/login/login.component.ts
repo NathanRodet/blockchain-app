@@ -23,7 +23,7 @@ export class LoginComponent {
 
   async login(): Promise<void> {
     try {
-      const success = await this.authService.loginWithMetaMask();
+      const success: boolean = await this.authService.loginWithMetaMask();
       if (success) {
         this.notificationService.showSuccessNotification('Successfully authenticated.', 'Success');
       } else {

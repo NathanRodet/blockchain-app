@@ -4,13 +4,12 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
 contract PrivilegeCard is ERC721Enumerable {
-    enum DiscountRate { None, TenPercent, TwentyFivePercent, FiftyPercent }
-    mapping(DiscountRate => uint256) private discountPercentages;
+    uint256[] private safeDiscountPercentages = [25, 50, 75];
 
     struct Card {
         string name;
         uint256 price;
-        DiscountRate discountRate;
+        uint256 discountRate;
         uint256 quantity;
         string imageUrl;
         string description;
@@ -37,11 +36,6 @@ contract PrivilegeCard is ERC721Enumerable {
 
     constructor() ERC721("PrivilegeCard", "PRVC") {
         admins[msg.sender] = true;
-        
-        discountPercentages[DiscountRate.None] = 0;
-        discountPercentages[DiscountRate.TenPercent] = 10;
-        discountPercentages[DiscountRate.TwentyFivePercent] = 25;
-        discountPercentages[DiscountRate.FiftyPercent] = 50;
     }
 
     function addAdmin(address admin) public onlyAdmin {
@@ -54,8 +48,18 @@ contract PrivilegeCard is ERC721Enumerable {
         emit AdminRemoved(admin);
     }
 
-    function createCard(string memory name, uint256 price, DiscountRate discountRate, uint256 quantity, string memory imageUrl, string memory description) public onlyAdmin {
+    function isValidDiscountPercentage(uint256 discount) private view returns (bool) {
+        for (uint i = 0; i < safeDiscountPercentages.length; i++) {
+            if (safeDiscountPercentages[i] == discount) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function createCard(string memory name, uint256 price, uint256 discountRate, uint256 quantity, string memory imageUrl, string memory description) public onlyAdmin {
         require(quantity > 0, "Quantity must be at least 1");
+        require(isValidDiscountPercentage(discountRate), "Invalid discount rate");
         cards[_nextCardId] = Card(name, price, discountRate, quantity, imageUrl, description);
         emit CardCreated(_nextCardId, name, quantity);
         _nextCardId++;
