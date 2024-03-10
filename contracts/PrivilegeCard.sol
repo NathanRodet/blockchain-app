@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
 contract PrivilegeCard is ERC721Enumerable {
     enum DiscountRate { None, TenPercent, TwentyFivePercent, FiftyPercent }
-    mapping(DiscountRate => uint256) private discountPercentages;
+    mapping(DiscountRate => uint256) public discountPercentages;
 
     struct Card {
         string name;
@@ -55,6 +55,16 @@ contract PrivilegeCard is ERC721Enumerable {
         cards[_nextCardId] = Card(name, price, discountRate, quantity, imageUrl, description);
         emit CardCreated(_nextCardId, name, quantity);
         _nextCardId++;
+    }
+
+    function getBiggestReduction() public view returns (DiscountRate) {
+        DiscountRate biggestReduction = DiscountRate.None;
+        for (uint256 i = uint256(DiscountRate.TenPercent); i <= uint256(DiscountRate.FiftyPercent); i++) {
+            if (discountPercentages[DiscountRate(i)] > discountPercentages[biggestReduction]) {
+                biggestReduction = DiscountRate(i);
+            }
+        }
+        return biggestReduction;
     }
 
     function buyCard(uint256 cardId) public payable {

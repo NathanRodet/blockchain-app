@@ -57,9 +57,10 @@ contract Tickets  {
     }
 
     function buyTicket(uint256 ticketId) public payable {
-        require(msg.value >= defaultTicketPrice[TicketType(ticketId)], "The Ether does not match the price of the item");
-
         // TODO: Require the price with the biggest reduction available for a ticket to be bought
+
+        // TODO: Replace the checked price by the one with the biggest reduction available
+        require(msg.value >= defaultTicketPrice[TicketType(ticketId)], "The Ether does not match the price of the item");
 
         emit TicketBought(ticketId, msg.sender);
     }
