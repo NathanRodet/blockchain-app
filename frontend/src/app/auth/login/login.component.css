@@ -24,22 +24,25 @@
     border-radius: 5px;
     background-color: #f9f9f9;
     align-items: center;
+    display: flex;
+    flex-direction: column;
 }
 
 h2 {
     text-align: center;
 }
 
-button {
+button, .instruction p {
     text-align: center;
 }
 
 .form-group {
+    width: 100%; /* Adjusted to ensure consistent sizing */
     margin-bottom: 20px;
 }
 
 .form-control {
-    width: 97.5%;
+    width: 100%; /* Changed from 97.5% to be fully responsive within the form-group */
     padding: 8px;
     font-size: 16px;
     border: 1px solid #ccc;
@@ -47,12 +50,9 @@ button {
 }
 
 .btn {
-    display: inline-block;
+    width: 100%; /* Ensures the button fills the form width */
     padding: 8px 16px;
     font-size: 16px;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
     border: none;
     border-radius: 5px;
     background-color: #007bff;
@@ -61,4 +61,9 @@ button {
 
 .btn:hover {
     background-color: #0056b3;
+}
+
+.instruction p {
+    font-size: 14px;
+    color: #666;
 }

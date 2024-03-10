@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../services/notification.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -10,17 +11,24 @@ import { NotificationService } from '../../services/notification.service';
 export class LoginComponent {
   constructor(
     private authService: AuthService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private router: Router
   ) { }
 
-  async login(addressETH: string): Promise<void> {
+  ngOnInit(): void {
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/']);
+    }
+  }
+
+  async login(): Promise<void> {
     try {
-      const success = await this.authService.login(addressETH);
-      if (!success && addressETH.trim() !== '') {
-        this.notificationService.showErrorNotification('Invalid Ethereum address', 'Error');
-      }
-      else {
-        this.notificationService.showSuccessNotification('Succesfully authentificated with the address ETH provided', 'Success');
+      
+      const success = await this.authService.loginWithMetaMask();
+      if (success) {
+        this.notificationService.showSuccessNotification('Successfully authenticated.', 'Success');
+      } else {
+        this.notificationService.showErrorNotification('Authentication failed. Please ensure you have MetaMask installed and are connected to the correct network.', 'Error');
       }
     } catch (error) {
       this.notificationService.showErrorNotification(`An error occurred during login: ${error}`, 'Error');
