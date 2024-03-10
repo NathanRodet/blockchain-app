@@ -50,13 +50,23 @@ button, .instruction p {
 }
 
 .btn {
-    width: 100%; /* Ensures the button fills the form width */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
     padding: 8px 16px;
     font-size: 16px;
     border: none;
     border-radius: 5px;
-    background-color: #007bff;
+    background-color: #f7a455;
     color: #fff;
+    text-align: center;
+}
+
+.metamask-icon {
+    width: 24px;
+    height: auto;
+    margin-right: 8px;
 }
 
 .btn:hover {

@@ -15,15 +15,14 @@ export class LoginComponent {
     private router: Router
   ) { }
 
-  ngOnInit(): void {
-    if (this.authService.isLoggedIn()) {
+  async ngOnInit(): Promise<void> {
+    if (await this.authService.isLoggedIn()) {
       this.router.navigate(['/']);
     }
   }
 
   async login(): Promise<void> {
     try {
-      
       const success = await this.authService.loginWithMetaMask();
       if (success) {
         this.notificationService.showSuccessNotification('Successfully authenticated.', 'Success');

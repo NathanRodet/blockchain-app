@@ -17,7 +17,7 @@ export class AuthService {
   private provider: any;
   constructor(private router: Router) { }
 
-  async loginWithMetaMask(): Promise<boolean> {
+  public async loginWithMetaMask(): Promise<boolean> {
     if (typeof window.ethereum === 'undefined') {
       console.error("Ethereum wallet is not connected. Please install MetaMask or another Ethereum wallet.");
       return false;
@@ -38,10 +38,23 @@ export class AuthService {
     }
   }
 
-  public isLoggedIn(): boolean {
-    return !!localStorage.getItem('currentUser');
+  public async isLoggedIn(): Promise<boolean> {
+    let connectedAddresses: string[] = [];
+  
+    if (window.ethereum) {
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+        if (accounts && Array.isArray(accounts)) {
+          connectedAddresses = accounts;
+        }
+        if (connectedAddresses.length === 0) this.logout();
+      } catch (error) {
+        console.error("Error fetching accounts", error);
+      }
+    }
+    return connectedAddresses.length > 0;
   }
-
+  
   public logout(): void {
     localStorage.removeItem('currentUser');
     this.provider = null;
