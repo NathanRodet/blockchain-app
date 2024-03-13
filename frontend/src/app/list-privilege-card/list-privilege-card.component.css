@@ -21,7 +21,7 @@
 .card img {
   max-width: 100%;
   display: block;
-  height: 200px; /* fixed height or use object-fit */
+  height: 200px;
 }
 
 .card-details {

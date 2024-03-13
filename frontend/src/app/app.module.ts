@@ -9,6 +9,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr'; 
 import { AuthModule } from './auth/auth.module';
 import { ListPrivilegeCardModule } from './list-privilege-card/list-privilege-card.module';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 
 @NgModule({
   declarations: [
@@ -21,13 +24,15 @@ import { ListPrivilegeCardModule } from './list-privilege-card/list-privilege-ca
     ListPrivilegeCardModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    MatButtonModule,
+    MatCardModule,
     ToastrModule.forRoot({
         timeOut: 3000,
         positionClass: 'toast-top-right',
         preventDuplicates: true,
       })
   ],
-  providers: [AuthService],
+  providers: [AuthService, provideAnimationsAsync()],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
