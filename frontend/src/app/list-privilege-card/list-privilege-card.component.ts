@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ListPrivilegeCardService } from '../services/list-privilege-card.service';
 import { PrivilegeCard } from '../models/privilege-card.model';
+import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-privilege-card-list',
@@ -10,11 +12,19 @@ import { PrivilegeCard } from '../models/privilege-card.model';
 export class PrivilegeCardListComponent implements OnInit {
   cards: PrivilegeCard[] = [];
 
-  constructor(private listCardsService: ListPrivilegeCardService) {}
+  constructor(
+    private authService: AuthService,
+    private listCardsService: ListPrivilegeCardService,
+    private router: Router
+  ) { }
 
-  ngOnInit(): void {
-    this.loadCards();
-    this.listCardsService.createInitialCards();
+  async ngOnInit(): Promise<void> {
+    if (!(await this.authService.isLoggedIn())) {
+      this.router.navigate(['/login']);
+    } else {
+      this.loadCards();
+      this.listCardsService.createInitialCards();
+    }
   }
 
   async loadCards(): Promise<void> {
