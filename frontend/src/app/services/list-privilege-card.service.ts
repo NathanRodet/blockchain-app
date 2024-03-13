@@ -50,9 +50,9 @@ export class ListPrivilegeCardService {
 
   public getAvailableCards(): any[] {
     return [
-      { name: 'Gold', price: ethers.parseEther('1'), discountRate: 75, quantity: 100, imageUrl: 'http://0nlyF@n-MYM.com/gold.png', description: 'Gold Card Description' },
-      { name: 'Silver', price: ethers.parseEther('0.5'), discountRate: 50, quantity: 100, imageUrl: 'http://0nlyF@n-MYM.com/silver.png', description: 'Silver Card Description' },
-      { name: 'Bronze', price: ethers.parseEther('0.2'), discountRate: 25, quantity: 100, imageUrl: 'http://0nlyF@n-MYM.com/bronze.png', description: 'Bronze Card Description' },
+      { name: 'Gold', price: ethers.parseEther('1'), discountRate: 75, quantity: 100, imageUrl: 'https://i.imgur.com/H9ufH3W.png', description: 'Gold Card Description' },
+      { name: 'Silver', price: ethers.parseEther('0.5'), discountRate: 50, quantity: 100, imageUrl: 'https://i.imgur.com/EjLJEfi.png', description: 'Silver Card Description' },
+      { name: 'Bronze', price: ethers.parseEther('0.2'), discountRate: 25, quantity: 100, imageUrl: 'https://i.imgur.com/OLRrRmQ.png', description: 'Bronze Card Description' },
     ];
   }
 }

@@ -2,15 +2,20 @@
   <h2>Available Privilege Cards</h2>
   <mat-card *ngFor="let card of cards" class="card">
     <img mat-card-image [src]="card.imageUrl" alt="Image de la carte">
-    <mat-card-content>
+    <mat-card-content class="card-details">
       <h3>{{ card.name }}</h3>
       <p>{{ card.description }}</p>
-      <p>Prix: {{ card.price }} ETH</p>
-      <p>Réduction: {{ card.discountRate }}%</p>
-      <p>Quantité restante: {{ card.quantity }}</p>
+      <p>
+        <strong>Price:</strong>
+         {{ card.price }} ETH
+      </p>
+      <p>
+        <strong>Discount Rate:</strong>
+         {{ card.discountRate }}%
+      </p>
     </mat-card-content>
-    <mat-card-actions>
-      <button mat-raised-button color="primary">Acheter</button>
+    <mat-card-actions class="card-actions">
+      <button mat-raised-button color="primary">Purchase</button>
     </mat-card-actions>
   </mat-card>
 </div>
