@@ -1,11 +1,13 @@
-import { Injectable, OnInit } from '@angular/core';
-import { ethers } from 'ethers';
-import { MetaMaskInpageProvider } from "@metamask/providers";
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { MetaMaskInpageProvider } from "@metamask/providers";
+import { NotificationService } from './notification.service';
+import { Web3Service } from './web3.service';
+import PrivilegeCard from '../../../../artifacts/contracts/PrivilegeCard.sol/PrivilegeCard.json';
 
 declare global {
   interface Window {
-    ethereum?: MetaMaskInpageProvider
+    ethereum?: MetaMaskInpageProvider;
   }
 }
 
@@ -14,23 +16,28 @@ declare global {
 })
 
 export class AuthService {
-  private provider: any;
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private web3Service: Web3Service, 
+    private notificationService: NotificationService
+  ) { }
 
   public async loginWithMetaMask(): Promise<boolean> {
     if (typeof window.ethereum === 'undefined') {
-      console.error("Ethereum wallet is not connected. Please install MetaMask or another Ethereum wallet.");
+      this.notificationService.showErrorNotification("Ethereum wallet is not connected. Please install MetaMask or another Ethereum wallet.", "Error");
       return false;
     }
 
     try {
       await window.ethereum.request({ method: 'eth_requestAccounts' });
-      this.provider = new ethers.BrowserProvider(window.ethereum)
-      const signer = await this.provider.getSigner();
-      const address = await signer.getAddress();
 
-      localStorage.setItem('currentUser', JSON.stringify({ address }));
-      this.router.navigate(['/']);
+      const contractAddress = await this.web3Service.getETHAddress();
+      if (contractAddress !== null) {
+        localStorage.setItem('contractAddress', JSON.stringify({ contractAddress }));
+        localStorage.setItem('contractABI', JSON.stringify(PrivilegeCard.abi))
+        this.router.navigate(['/']);
+      }
+
       return true;
     } catch (error) {
       console.error('Error connecting with MetaMask', error);
@@ -57,7 +64,6 @@ export class AuthService {
   
   public logout(): void {
     localStorage.removeItem('currentUser');
-    this.provider = null;
     this.router.navigate(['/login']);
   }
 }

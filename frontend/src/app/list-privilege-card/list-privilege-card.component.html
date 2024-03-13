@@ -1,0 +1,15 @@
+<div class="cards-container">
+    <h2>Available Privilege Cards</h2>
+    <div *ngFor="let card of cards" class="card">
+      <img [src]="card.imageUrl" alt="Image de la carte">
+      <div class="card-details">
+        <h3>{{ card.name }}</h3>
+        <p>{{ card.description }}</p>
+        <p>Prix: {{ card.price }} ETH</p>
+        <p>Réduction: {{ card.discountRate }}%</p>
+        <p>Quantité restante: {{ card.quantity }}</p>
+        <button> Acheter </button>
+      </div>
+    </div>
+  </div>
+  
