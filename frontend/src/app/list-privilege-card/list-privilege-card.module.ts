@@ -5,11 +5,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 
 @NgModule({
-  declarations: [PrivilegeCardListComponent],
+  declarations: [
+    PrivilegeCardListComponent
+  ],
   imports: [
     CommonModule,
     MatButtonModule,
     MatCardModule,
-  ]
+  ],
 })
 export class ListPrivilegeCardModule { }

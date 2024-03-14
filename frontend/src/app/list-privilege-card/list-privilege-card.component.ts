@@ -4,6 +4,7 @@ import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { NotificationService } from '../services/notification.service';
 import { ethers } from 'ethers'
+import { AdminPrivilegeCardService } from '../services/admin-privilege-card.service';
 
 @Component({
   selector: 'app-privilege-card-list',
@@ -12,10 +13,12 @@ import { ethers } from 'ethers'
 })
 export class PrivilegeCardListComponent implements OnInit {
   cards: any[] = [];
+  isAdmin: boolean = false;
 
   constructor(
     private authService: AuthService,
     private listCardsService: ListPrivilegeCardService,
+    private adminCardsService: AdminPrivilegeCardService,
     private notificationService: NotificationService,
     private router: Router
   ) { }
@@ -24,18 +27,11 @@ export class PrivilegeCardListComponent implements OnInit {
     if (!(await this.authService.isLoggedIn())) {
       this.router.navigate(['/login']);
     } else {
+      this.isAdmin = await this.adminCardsService.isAdmin();
+      if (this.isAdmin) {
+        this.router.navigate(['admin/privilege-cards/purchase'])
+      }
       this.loadCards();
-      const newAdminAddress = '0xF2aa47A25bEEFfD6e54bB9eB8567E4924A839608';
-      this.listCardsService.addAdmin(newAdminAddress)
-      .then(() => {
-        return this.listCardsService.getAllAdmins();
-      })
-      .then((adminAddress) => {
-        console.log(adminAddress);
-      })
-      .catch((error) => {
-        console.error('Error in the process:', error);
-      });
     }
   }
 
@@ -45,7 +41,7 @@ export class PrivilegeCardListComponent implements OnInit {
 
   async purchaseCard(cardId: number, price: number): Promise<void> {
     try {
-      await this.listCardsService.buyCard(cardId, ethers.parseEther(price.toString()).toString());
+      this.listCardsService.buyCard(cardId, ethers.parseEther(price.toString()).toString());
       this.notificationService.showSuccessNotification('You have successfully purchased the card.', 'Purchase Successful');
     } catch (error) {
       this.notificationService.showErrorNotification('There was a problem purchasing the card. Please try again.', 'Purchase Failed');

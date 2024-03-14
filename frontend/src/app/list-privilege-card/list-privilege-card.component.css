@@ -82,3 +82,21 @@
   color: #555;
   line-height: 1.6;
 }
+
+button {
+  background-color: hsl(259, 94%, 45%);
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: auto;
+  text-align: center;
+  align-self: center;
+  margin: auto;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #0056b3;
+}

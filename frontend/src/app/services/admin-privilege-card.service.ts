@@ -1,0 +1,50 @@
+import { Injectable } from '@angular/core';
+import { ethers, Signer, Provider } from 'ethers';
+import { Web3Service } from './web3.service';
+import { ListPrivilegeCardService } from './list-privilege-card.service';
+
+@Injectable({
+    providedIn: 'root',
+})
+export class AdminPrivilegeCardService {
+    private contractAddress: string | any;
+    private contractABI: any | null;
+    private provider: Provider | any;
+    private privilegeCardContract: any;
+
+    constructor(
+        private listPrivilegeCardService: ListPrivilegeCardService,
+        private web3Service: Web3Service
+    ) {
+        this.provider = this.web3Service.getETHProvider();
+        this.contractAddress = this.listPrivilegeCardService.getContractAddress();
+        this.contractABI = this.listPrivilegeCardService.getContractABI();
+    }
+
+    public async addAdmin(newAdminAddress: string): Promise<void> {
+        this.privilegeCardContract = new ethers.Contract(this.contractAddress, this.contractABI, await this.web3Service.getETHSigner());
+        if (!this.privilegeCardContract) {
+            console.error('Contract is not initialized');
+            return;
+        }
+
+        try {
+            const tx = await this.privilegeCardContract.addAdmin(newAdminAddress);
+            await tx.wait();
+            console.log(`Admin ${newAdminAddress} added successfully.`);
+        } catch (error) {
+            console.error(`Error adding ${newAdminAddress} as admin:`, error);
+            throw error;
+        }
+    }
+
+    public async isAdmin(): Promise<boolean> {
+        try {
+            this.privilegeCardContract = new ethers.Contract(this.contractAddress, this.contractABI, this.provider);
+            return await this.privilegeCardContract.isAdmin(this.contractAddress);
+        } catch (error) {
+            console.error(`Error when displaying admin addresses:`, error);
+            throw error;
+        }
+    }
+}

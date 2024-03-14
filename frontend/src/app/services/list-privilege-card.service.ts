@@ -9,21 +9,20 @@ export class ListPrivilegeCardService {
   private contractAddress: string | any;
   private contractABI: any | null;
   private signer: Signer | any;
-  private provider: Provider | any;
   private privilegeCardContract: any;
 
   constructor(private web3Service: Web3Service) {
     Promise.resolve(this.initializeContract());
   }
 
-  private async initializeContract(): Promise<void> {
+  public async initializeContract(): Promise<void> {
     this.contractAddress = this.getContractAddress();
     this.contractABI = this.getContractABI();
     this.signer = await this.web3Service.getETHSigner();
     this.privilegeCardContract = new ethers.Contract(this.contractAddress, this.contractABI, this.signer);
   }
 
-  private getContractAddress(): string | any {
+  public getContractAddress(): string | any {
     const contractAddressJson = localStorage.getItem('contractAddress');
     if (!contractAddressJson) {
       throw new Error('Contract address not found in localStorage');
@@ -32,7 +31,7 @@ export class ListPrivilegeCardService {
     return contractAddressObject.contractAddress;
   }
 
-  private getContractABI(): any {
+  public getContractABI(): any {
     const abiFromStorage = localStorage.getItem('contractABI');
     if (!abiFromStorage) {
       throw new Error('Contract ABI not found in localStorage');
@@ -76,40 +75,13 @@ export class ListPrivilegeCardService {
 
   public getAvailableCards(): any[] {
     return [
-      { id: 1, name: 'Gold', price: ethers.parseEther('0.000000000000000007'), discountRate: 75, quantity: 0, imageUrl: 'https://i.imgur.com/H9ufH3W.png', description: 'Gold Card Description' },
+      { id: 1, name: 'Gold', price: ethers.parseEther('0.000000000000000007'), discountRate: 75, quantity: 100, imageUrl: 'https://i.imgur.com/H9ufH3W.png', description: 'Gold Card Description' },
       { id: 2, name: 'Silver', price: ethers.parseEther('0.000000000000000005'), discountRate: 50, quantity: 100, imageUrl: 'https://i.imgur.com/EjLJEfi.png', description: 'Silver Card Description' },
       { id: 3, name: 'Bronze', price: ethers.parseEther('0.000000000000000002'), discountRate: 25, quantity: 100, imageUrl: 'https://i.imgur.com/OLRrRmQ.png', description: 'Bronze Card Description' },
     ];
   }
 
-  public async addAdmin(newAdminAddress: string): Promise<void> {
-    this.privilegeCardContract = new ethers.Contract(this.contractAddress, this.contractABI, await this.web3Service.getETHSigner());
-    if (!this.privilegeCardContract) {
-      console.error('Contract is not initialized');
-      return;
-    }
-
-    try {
-      const tx = await this.privilegeCardContract.addAdmin(newAdminAddress);
-      await tx.wait();
-      console.log(`Admin ${newAdminAddress} added successfully.`);
-    } catch (error) {
-      console.error(`Error adding ${newAdminAddress} as admin:`, error);
-      throw error;
-    }
-  }
-
-
-  public async getAllAdmins(): Promise<any[]> {
-    try {
-      this.provider = this.web3Service.getETHProvider();
-      this.privilegeCardContract = new ethers.Contract(this.contractAddress, this.contractABI, this.provider);
-      const result = await this.privilegeCardContract.getAllAdmins();
-      console.log("ça marche bb" + result)
-      return result;
-    } catch (error) {
-      console.error(`Error when displaying admin addresses:`, error);
-      throw error;
-    }
+  public async getOwnedPrivilegeCards(): Promise<any[]> {
+    return this.privilegeCardContract.getOwnedCards(this.contractAddress);
   }
 }

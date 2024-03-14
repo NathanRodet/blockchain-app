@@ -45,7 +45,6 @@ contract PrivilegeCard is ERC721Enumerable {
 
     constructor() ERC721("PrivilegeCard", "PRVC") {
         admins[msg.sender] = true;
-        adminAddresses.push(0xF2aa47A25bEEFfD6e54bB9eB8567E4924A839608);
         createCard(
             "Gold",
             0.000000000000000007 ether,
