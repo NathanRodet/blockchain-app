@@ -41,7 +41,7 @@ export class PrivilegeCardListComponent implements OnInit {
 
   async purchaseCard(cardId: number, price: number): Promise<void> {
     try {
-      this.listCardsService.buyCard(cardId, ethers.parseEther(price.toString()).toString());
+      await this.listCardsService.buyCard(cardId, ethers.parseEther(price.toString()).toString());
       this.notificationService.showSuccessNotification('You have successfully purchased the card.', 'Purchase Successful');
     } catch (error) {
       this.notificationService.showErrorNotification('There was a problem purchasing the card. Please try again.', 'Purchase Failed');
