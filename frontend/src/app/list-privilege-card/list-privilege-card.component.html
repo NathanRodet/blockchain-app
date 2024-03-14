@@ -7,15 +7,15 @@
       <p>{{ card.description }}</p>
       <p>
         <strong>Price:</strong>
-         {{ card.price }} ETH
+        {{ card.price }} ETH
       </p>
       <p>
         <strong>Discount Rate:</strong>
-         {{ card.discountRate }}%
+        {{ card.discountRate }}%
       </p>
     </mat-card-content>
     <mat-card-actions class="card-actions">
-      <button mat-raised-button color="primary">Purchase</button>
+      <button mat-raised-button color="primary" (click)="purchaseCard(card.id, card.price)">Purchase</button>
     </mat-card-actions>
   </mat-card>
 </div>

@@ -4,20 +4,20 @@
     align-items: center;
     justify-content: center;
     height: 100vh;
-  }
-  
-  .not-found-container h1 {
+}
+
+.not-found-container h1 {
     font-size: 2em;
     color: #333;
-  }
-  
-  .not-found-container p {
+}
+
+.not-found-container p {
     font-size: 1.2em;
     color: #555;
     margin-top: 20px;
-  }
-  
-  .shrug {
-    font-size: 3em;
-  }
-  
+}
+
+.shrug {
+    font-size: 1.2em;
+    font-weight: bold;
+}
