@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { ListPrivilegeCardService } from '../services/list-privilege-card.service';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
@@ -20,6 +20,7 @@ export class PrivilegeCardListComponent implements OnInit {
     private listCardsService: ListPrivilegeCardService,
     private adminCardsService: AdminPrivilegeCardService,
     private notificationService: NotificationService,
+    private ngZone: NgZone,
     private router: Router
   ) { }
 
@@ -29,20 +30,30 @@ export class PrivilegeCardListComponent implements OnInit {
     } else {
       this.isAdmin = await this.adminCardsService.isAdmin();
       if (this.isAdmin) {
-        this.router.navigate(['admin/privilege-cards/purchase'])
+        this.router.navigate(['admin/privilege-cards/add'])
       }
       this.loadCards();
+      this.listCardsService.cards$.subscribe(cards => {
+        this.cards = cards;
+      });
+      this.listCardsService.cards$.subscribe(console.log)
+      this.listCardsService.updateAvailableCards();
     }
   }
 
   async loadCards(): Promise<void> {
-    this.cards = this.listCardsService.getAvailableCards();
+    this.cards = await this.listCardsService.getAvailableCards();
   }
 
   async purchaseCard(cardId: number, price: number): Promise<void> {
     try {
-      await this.listCardsService.buyCard(cardId, ethers.parseEther(price.toString()).toString());
+      const formattedEther = (price * (10^18)).toFixed(18);
+      await this.listCardsService.buyCard(cardId, ethers.parseEther((formattedEther).toString()).toString());
       this.notificationService.showSuccessNotification('You have successfully purchased the card.', 'Purchase Successful');
+
+      this.ngZone.run(async () => {
+        await this.listCardsService.updateAvailableCards();
+      });
     } catch (error) {
       this.notificationService.showErrorNotification('There was a problem purchasing the card. Please try again.', 'Purchase Failed');
       console.error(error);

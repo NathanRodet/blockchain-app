@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ethers, Signer, Provider } from 'ethers';
 import { Web3Service } from './web3.service';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +11,9 @@ export class ListPrivilegeCardService {
   private contractABI: any | null;
   private signer: Signer | any;
   private privilegeCardContract: any;
+  private provider: Provider | any;
+  private cardsSubject = new BehaviorSubject<any[]>([]);
+  cards$ = this.cardsSubject.asObservable();
 
   constructor(private web3Service: Web3Service) {
     Promise.resolve(this.initializeContract());
@@ -44,7 +48,7 @@ export class ListPrivilegeCardService {
       throw new Error('Contract is not initialized');
     }
 
-    for (const card of this.getAvailableCards()) {
+    for (const card of await this.getAvailableCards()) {
       try {
         await this.privilegeCardContract.createCard(card.name, card.price, card.discountRate, card.quantity, card.imageUrl, card.description);
         console.log(`${card.name} card created successfully`);
@@ -67,21 +71,40 @@ export class ListPrivilegeCardService {
       const transactionResponse = await this.privilegeCardContract.connect(this.signer).buyCard(cardId, { value });
       await transactionResponse.wait();
       console.log(`Card with ID ${cardId} bought successfully.`);
+      await this.updateAvailableCards();
     } catch (error: any) {
       console.error(`Error buying card with ID ${cardId}:`, error);
       throw new Error(`Error buying card with ID ${cardId}`);
     }
   }
 
-  public getAvailableCards(): any[] {
-    return [
-      { id: 1, name: 'Gold', price: ethers.parseEther('0.000000000000000007'), discountRate: 75, quantity: 100, imageUrl: 'https://i.imgur.com/H9ufH3W.png', description: 'Gold Card Description' },
-      { id: 2, name: 'Silver', price: ethers.parseEther('0.000000000000000005'), discountRate: 50, quantity: 100, imageUrl: 'https://i.imgur.com/EjLJEfi.png', description: 'Silver Card Description' },
-      { id: 3, name: 'Bronze', price: ethers.parseEther('0.000000000000000002'), discountRate: 25, quantity: 100, imageUrl: 'https://i.imgur.com/OLRrRmQ.png', description: 'Bronze Card Description' },
-    ];
+  public async getAvailableCards(): Promise<any[]> {
+    this.provider = this.web3Service.getETHProvider();
+    this.privilegeCardContract = new ethers.Contract(this.contractAddress, this.contractABI, this.provider);
+    const cardsArray = await this.privilegeCardContract.getAvailableCards();
+    console.log(cardsArray)
+
+    return cardsArray.map((card: any[]) => ({
+      id: Number(card[0]),
+      name: card[1],
+      price: ethers.formatEther(card[2]),
+      discountRate: Number(card[3]),
+      quantity: Number(card[4]),
+      imageUrl: card[5],
+      description: card[6]
+    }));
+  }
+
+  public async updateAvailableCards(): Promise<void> {
+    const cardsArray = await this.getAvailableCards();
+    console.log(cardsArray)
+    this.cardsSubject.next(cardsArray);
+    this.cardsSubject.subscribe(console.log)
   }
 
   public async getOwnedPrivilegeCards(): Promise<any[]> {
+    this.provider = this.web3Service.getETHProvider();
+    this.privilegeCardContract = new ethers.Contract(this.contractAddress, this.contractABI, this.provider);
     return this.privilegeCardContract.getOwnedCards(this.contractAddress);
   }
 }

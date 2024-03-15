@@ -7,6 +7,7 @@ contract PrivilegeCard is ERC721Enumerable {
     uint256[] private safeDiscountPercentages = [25, 50, 75];
 
     struct Card {
+        uint id;
         string name;
         uint256 price;
         uint256 discountRate;
@@ -15,7 +16,7 @@ contract PrivilegeCard is ERC721Enumerable {
         string description;
     }
 
-    uint256 private _nextCardId = 1;
+    uint256 private _nextCardId = 0;
     mapping(uint256 => Card) public cards;
     mapping(address => bool) public admins;
     address[] private adminAddresses;
@@ -46,6 +47,7 @@ contract PrivilegeCard is ERC721Enumerable {
     constructor() ERC721("PrivilegeCard", "PRVC") {
         admins[msg.sender] = true;
         createCard(
+            1,
             "Gold",
             0.000000000000000007 ether,
             75,
@@ -54,6 +56,7 @@ contract PrivilegeCard is ERC721Enumerable {
             "Gold Card Description"
         );
         createCard(
+            2,
             "Silver",
             0.000000000000000005 ether,
             50,
@@ -62,6 +65,7 @@ contract PrivilegeCard is ERC721Enumerable {
             "Silver Card Description"
         );
         createCard(
+            3,
             "Bronze",
             0.000000000000000002 ether,
             25,
@@ -102,6 +106,7 @@ contract PrivilegeCard is ERC721Enumerable {
     }
 
     function createCard(
+        uint id,
         string memory name,
         uint256 price,
         uint256 discountRate,
@@ -115,6 +120,7 @@ contract PrivilegeCard is ERC721Enumerable {
             "Invalid discount rate"
         );
         cards[_nextCardId] = Card(
+            id,
             name,
             price,
             discountRate,
@@ -144,6 +150,25 @@ contract PrivilegeCard is ERC721Enumerable {
             payable(msg.sender).transfer(excessPayment);
             emit RefundIssued(msg.sender, excessPayment);
         }
+    }
+
+    function getAvailableCards() public view returns (Card[] memory) {
+        uint256 availableCount = 0;
+        for (uint256 i = 0; i < _nextCardId; i++) {
+            if (cards[i].quantity > 0) {
+                availableCount++;
+            }
+        }
+
+        Card[] memory availableCards = new Card[](availableCount);
+        uint256 counter = 0;
+        for (uint256 i = 0; i < _nextCardId; i++) {
+            if (cards[i].quantity > 0) {
+                availableCards[counter] = cards[i];
+                counter++;
+            }
+        }
+        return availableCards;
     }
 
     function getOwnedCards(address owner) public view returns (Card[] memory) {

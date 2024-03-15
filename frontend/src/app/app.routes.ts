@@ -19,7 +19,7 @@ export const routes: Routes = [
     path: 'admin',
     canActivate: [AdminAuthGuard],
     children: [
-      { path: 'privilege-cards/purchase', component: PrivilegeCardListComponent },
+      { path: 'privilege-cards/add', component: PrivilegeCardListComponent },
       { path: '', component: NotFoundComponent },
       { path: '**', component: NotFoundComponent }
     ]
