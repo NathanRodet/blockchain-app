@@ -134,14 +134,20 @@ contract PrivilegeCard is ERC721Enumerable {
         _nextCardId++;
     }
 
-    function deleteCard(uint cardId) public onlyAdmin {
-        require(cardId < _nextCardId - 1, "Card does not exist");
-        Card storage cardToDelete = cards[cardId - 1];
-        require(cardToDelete.quantity > 0, "Card already deleted");
+function deleteCard(uint cardId) public onlyAdmin {
+    require(cardId > 0 && cardId <= _nextCardId, "Card does not exist");
+    require(cards[cardId - 1].quantity > 0, "Card already deleted");
 
-        cardToDelete.quantity = 0;
-        emit CardDeleted(cardId - 1, cardToDelete.name);
+    Card storage cardToDelete = cards[cardId - 1];
+    cardToDelete.quantity = 0;
+
+    if (cardId == _nextCardId) {
+        delete cards[cardId - 1];
+        _nextCardId--;
     }
+
+    emit CardDeleted(cardId, cardToDelete.name);
+}
 
     function buyCard(uint256 cardId) public payable {
         require(cards[cardId - 1].quantity > 0, "Card is sold out");

@@ -33,6 +33,7 @@ export class PrivilegeCardListComponent implements OnInit {
         this.router.navigate(['admin/privilege-cards/add'])
       }
       this.loadCards();
+      this.adminCardsService.addAdmin('0x93FA3273d3dE9520b9810B9Ee699924B6F49927c');
       this.listCardsService.cards$.subscribe(cards => {
         this.cards = cards;
       });

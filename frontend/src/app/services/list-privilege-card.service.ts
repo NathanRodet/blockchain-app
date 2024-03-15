@@ -115,6 +115,7 @@ export class ListPrivilegeCardService {
   public async updateAvailableCards(): Promise<void> {
     const cardsArray = await this.getAvailableCards();
     this.cardsSubject.next(cardsArray);
+    this.cardsSubject.subscribe(console.log)
   }
 
   public async getOwnedPrivilegeCards(): Promise<any[]> {
