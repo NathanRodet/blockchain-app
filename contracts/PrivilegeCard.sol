@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
 contract PrivilegeCard is ERC721Enumerable {
     uint256[] private safeDiscountPercentages = [25, 50, 75];
+    uint256[] private test;
 
     struct Card {
         uint id;
@@ -27,6 +28,7 @@ contract PrivilegeCard is ERC721Enumerable {
     event AdminAdded(address indexed newAdmin);
     event AdminRemoved(address indexed removedAdmin);
     event CardCreated(uint256 indexed cardId, string name, uint256 quantity);
+    event CardDeleted(uint256 indexed cardId, string name);
     event CardBought(
         uint256 indexed cardId,
         address indexed buyer,
@@ -69,7 +71,7 @@ contract PrivilegeCard is ERC721Enumerable {
             "Bronze",
             0.000000000000000002 ether,
             25,
-            100,
+            1000,
             "https://i.imgur.com/OLRrRmQ.png",
             "Bronze Card Description"
         );
@@ -132,17 +134,30 @@ contract PrivilegeCard is ERC721Enumerable {
         _nextCardId++;
     }
 
-    function buyCard(uint256 cardId) public payable {
-        require(cards[cardId].quantity > 0, "Card is sold out");
-        require(msg.value >= cards[cardId].price, "Ether sent is not enough");
+    function deleteCard(uint cardId) public onlyAdmin {
+        require(cardId < _nextCardId - 1, "Card does not exist");
+        Card storage cardToDelete = cards[cardId - 1];
+        require(cardToDelete.quantity > 0, "Card already deleted");
 
-        Card storage card = cards[cardId];
+        cardToDelete.quantity = 0;
+        emit CardDeleted(cardId - 1, cardToDelete.name);
+    }
+
+    function buyCard(uint256 cardId) public payable {
+        require(cards[cardId - 1].quantity > 0, "Card is sold out");
+        require(
+            msg.value >= cards[cardId - 1].price,
+            "Ether sent is not enough"
+        );
+
+        Card storage card = cards[cardId - 1];
         card.quantity = card.quantity - 1;
 
-        ownedCards[msg.sender].push(cardId);
-        ownedCardsIndex[cardId] = ownedCards[msg.sender].length - 1;
+        uint256[] storage buyerCardIds = ownedCards[msg.sender];
+        buyerCardIds.push(cardId - 1);
+        ownedCardsIndex[cardId - 1] = buyerCardIds.length - 1;
 
-        _safeMint(msg.sender, cardId);
+        _safeMint(msg.sender, cardId - 1);
         emit CardBought(cardId, msg.sender, card.quantity);
 
         uint256 excessPayment = msg.value - card.price;

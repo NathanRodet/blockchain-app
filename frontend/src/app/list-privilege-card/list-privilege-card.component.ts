@@ -24,7 +24,7 @@ export class PrivilegeCardListComponent implements OnInit {
     private router: Router
   ) { }
 
-  async ngOnInit(): Promise<void> {
+  public async ngOnInit(): Promise<void> {
     if (!(await this.authService.isLoggedIn())) {
       this.router.navigate(['/login']);
     } else {
@@ -36,18 +36,17 @@ export class PrivilegeCardListComponent implements OnInit {
       this.listCardsService.cards$.subscribe(cards => {
         this.cards = cards;
       });
-      this.listCardsService.cards$.subscribe(console.log)
       this.listCardsService.updateAvailableCards();
     }
   }
 
-  async loadCards(): Promise<void> {
+  public async loadCards(): Promise<void> {
     this.cards = await this.listCardsService.getAvailableCards();
   }
 
-  async purchaseCard(cardId: number, price: number): Promise<void> {
+  public async purchaseCard(cardId: number, price: number): Promise<void> {
     try {
-      const formattedEther = (price * (10^18)).toFixed(18);
+      const formattedEther = (price * (10 ^ 18)).toFixed(18);
       await this.listCardsService.buyCard(cardId, ethers.parseEther((formattedEther).toString()).toString());
       this.notificationService.showSuccessNotification('You have successfully purchased the card.', 'Purchase Successful');
 
@@ -58,5 +57,19 @@ export class PrivilegeCardListComponent implements OnInit {
       this.notificationService.showErrorNotification('There was a problem purchasing the card. Please try again.', 'Purchase Failed');
       console.error(error);
     }
+  }
+
+  public onDeleteCard(cardId: number): void {
+    this.listCardsService.deleteCard(cardId)
+      .then(() => {
+        this.notificationService.showSuccessNotification('Card deleted successfully.', 'Deletion Successful');
+        this.ngZone.run(async () => {
+          await this.listCardsService.updateAvailableCards();
+        });
+      })
+      .catch(error => {
+        this.notificationService.showErrorNotification('Failed to delete card. Please try again.', 'Deletion Failed');
+        console.error('Failed to delete card:', error);
+      });
   }
 }

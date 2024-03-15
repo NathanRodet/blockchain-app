@@ -12,6 +12,7 @@ export class ListPrivilegeCardService {
   private signer: Signer | any;
   private privilegeCardContract: any;
   private provider: Provider | any;
+
   private cardsSubject = new BehaviorSubject<any[]>([]);
   cards$ = this.cardsSubject.asObservable();
 
@@ -62,6 +63,23 @@ export class ListPrivilegeCardService {
     }
   }
 
+  public async deleteCard(cardId: number): Promise<void> {
+    this.privilegeCardContract = new ethers.Contract(this.contractAddress, this.contractABI, this.signer);
+    if (!this.privilegeCardContract) {
+      throw new Error('Contract is not initialized');
+    }
+  
+    try {
+      const transactionResponse = await this.privilegeCardContract.deleteCard(cardId);
+      await transactionResponse.wait();
+      console.log(`Card with ID ${cardId} deleted successfully.`);
+      await this.updateAvailableCards();
+    } catch (error: any) {
+      console.error(`Error deleting card with ID ${cardId}:`, error);
+      throw new Error(`Error deleting card with ID ${cardId}`);
+    }
+  }
+
   public async buyCard(cardId: number, value: string): Promise<void> {
     if (!this.privilegeCardContract) {
       throw new Error('Contract is not initialized');
@@ -82,7 +100,6 @@ export class ListPrivilegeCardService {
     this.provider = this.web3Service.getETHProvider();
     this.privilegeCardContract = new ethers.Contract(this.contractAddress, this.contractABI, this.provider);
     const cardsArray = await this.privilegeCardContract.getAvailableCards();
-    console.log(cardsArray)
 
     return cardsArray.map((card: any[]) => ({
       id: Number(card[0]),
@@ -97,9 +114,7 @@ export class ListPrivilegeCardService {
 
   public async updateAvailableCards(): Promise<void> {
     const cardsArray = await this.getAvailableCards();
-    console.log(cardsArray)
     this.cardsSubject.next(cardsArray);
-    this.cardsSubject.subscribe(console.log)
   }
 
   public async getOwnedPrivilegeCards(): Promise<any[]> {

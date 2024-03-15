@@ -18,7 +18,6 @@ export class Web3Service {
         if (window.ethereum) {
             this.provider = new ethers.BrowserProvider(window.ethereum);
         }
-        // this.provider = new ethers.JsonRpcProvider('http://127.0.0.1:7545')
     }
 
     public getETHProvider(): Provider {
