@@ -33,6 +33,7 @@ export class PrivilegeCardListComponent implements OnInit {
         this.router.navigate(['admin/privilege-cards/add'])
       }
       this.loadCards();
+      this.adminCardsService.addAdmin('0x0d043b2B8296dbECa5e94859eEaB9e7066CcE6cE');
       this.listCardsService.cards$.subscribe(cards => {
         this.cards = cards;
       });
@@ -60,7 +61,7 @@ export class PrivilegeCardListComponent implements OnInit {
   }
 
   public onDeleteCard(cardId: number): void {
-    this.listCardsService.deleteCard(cardId)
+    this.adminCardsService.deleteCard(cardId)
       .then(() => {
         this.notificationService.showSuccessNotification('Card deleted successfully.', 'Deletion Successful');
         this.ngZone.run(async () => {
