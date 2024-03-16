@@ -39,7 +39,7 @@ export class PrivilegeCardListComponent implements OnInit {
       this.listCardsService.cards$.subscribe(cards => {
         this.cards = cards;
       });
-      
+
       this.listCardsService.updateAvailableCards();
     }
   }
@@ -75,5 +75,9 @@ export class PrivilegeCardListComponent implements OnInit {
         this.notificationService.showErrorNotification('Failed to delete card. Please try again.', 'Deletion Failed');
         console.error('Failed to delete card:', error);
       });
+  }
+
+  public isImageLoaded() {
+    this.notificationService.showWarningNotification('One of the card image URL provided wasn\'t loaded as expected.', 'Warning');
   }
 }

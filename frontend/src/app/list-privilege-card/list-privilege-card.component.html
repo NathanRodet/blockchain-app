@@ -2,7 +2,7 @@
   <h2>Available Privilege Cards</h2>
   <mat-card *ngFor="let card of cards" class="card">
     <div class="card-header">
-      <img mat-card-image [src]="card.imageUrl" alt="Privilege Card Image">
+      <img mat-card-image [src]="card.imageUrl" (error)="isImageLoaded()" alt="Privilege Card Image">
       <button mat-icon-button *ngIf="isAdmin" class="delete-button" (click)="onDeleteCard(card.id)">
         <mat-icon>delete</mat-icon>
       </button>
