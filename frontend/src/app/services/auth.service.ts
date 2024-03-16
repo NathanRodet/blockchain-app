@@ -63,7 +63,7 @@ export class AuthService {
   }
   
   public logout(): void {
-    localStorage.removeItem('currentUser');
+    localStorage.removeItem('contractAddresses');
     this.router.navigate(['/login']);
   }
   
