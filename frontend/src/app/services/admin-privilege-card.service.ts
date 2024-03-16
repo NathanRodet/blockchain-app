@@ -47,22 +47,17 @@ export class AdminPrivilegeCardService {
             throw error;
         }
     }
-    public async createInitialCards(): Promise<void> {
-        if (!this.privilegeCardContract) {
-            throw new Error('Contract is not initialized');
-        }
 
-        for (const card of await this.listPrivilegeCardService.getAvailableCards()) {
-            try {
-                await this.privilegeCardContract.createCard(card.name, card.price, card.discountRate, card.quantity, card.imageUrl, card.description);
-                console.log(`${card.name} card created successfully`);
-            } catch (error: any) {
-                if (error.reason.includes('revert Quantity must be at least 1')) {
-                    console.error(`Error creating ${card.name} card: Quantity must be at least 1`);
-                } else {
-                    console.error(`Error creating ${card.name} card:`, error);
-                }
+    public async createCard(card: any): Promise<void> {
+        try {
+            this.privilegeCardContract = new ethers.Contract(this.contractAddress, this.contractABI, await this.web3Service.getETHSigner());
+            if (!this.privilegeCardContract) {
+                throw new Error('Contract is not initialized');
             }
+            await this.privilegeCardContract.createCard(card.name, card.price, card.discountRate, card.quantity, card.imageUrl, card.description);
+            console.log(`${card.name} card created successfully`);
+        } catch (error: any) {
+            console.error(`Error creating ${card.name} card:`, error);
         }
     }
 

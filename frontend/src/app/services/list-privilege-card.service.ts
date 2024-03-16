@@ -28,12 +28,12 @@ export class ListPrivilegeCardService {
   }
 
   public getContractAddress(): string | any {
-    const contractAddressJson = localStorage.getItem('contractAddress');
+    const contractAddressJson = localStorage.getItem('contractAddresses');
     if (!contractAddressJson) {
       throw new Error('Contract address not found in localStorage');
     }
     const contractAddressObject = JSON.parse(contractAddressJson);
-    return contractAddressObject.contractAddress;
+    return contractAddressObject.privilegeCardAddress;
   }
 
   public getContractABI(): any {
@@ -42,42 +42,6 @@ export class ListPrivilegeCardService {
       throw new Error('Contract ABI not found in localStorage');
     }
     return JSON.parse(abiFromStorage);
-  }
-
-  public async createInitialCards(): Promise<void> {
-    if (!this.privilegeCardContract) {
-      throw new Error('Contract is not initialized');
-    }
-
-    for (const card of await this.getAvailableCards()) {
-      try {
-        await this.privilegeCardContract.createCard(card.name, card.price, card.discountRate, card.quantity, card.imageUrl, card.description);
-        console.log(`${card.name} card created successfully`);
-      } catch (error: any) {
-        if (error.reason.includes('revert Quantity must be at least 1')) {
-          console.error(`Error creating ${card.name} card: Quantity must be at least 1`);
-        } else {
-          console.error(`Error creating ${card.name} card:`, error);
-        }
-      }
-    }
-  }
-
-  public async deleteCard(cardId: number): Promise<void> {
-    this.privilegeCardContract = new ethers.Contract(this.contractAddress, this.contractABI, this.signer);
-    if (!this.privilegeCardContract) {
-      throw new Error('Contract is not initialized');
-    }
-  
-    try {
-      const transactionResponse = await this.privilegeCardContract.deleteCard(cardId);
-      await transactionResponse.wait();
-      console.log(`Card with ID ${cardId} deleted successfully.`);
-      await this.updateAvailableCards();
-    } catch (error: any) {
-      console.error(`Error deleting card with ID ${cardId}:`, error);
-      throw new Error(`Error deleting card with ID ${cardId}`);
-    }
   }
 
   public async buyCard(cardId: number, value: string): Promise<void> {

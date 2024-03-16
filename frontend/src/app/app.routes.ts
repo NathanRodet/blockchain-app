@@ -4,9 +4,11 @@ import { LoginComponent } from './auth/login/login.component';
 import { PrivilegeCardListComponent } from './list-privilege-card/list-privilege-card.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { AdminAuthGuard } from './guards/admin-auth.guard';
+import { EditPrivilegeCardComponent } from './edit-privilege-card/edit-privilege-card.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  { path: 'test', component: EditPrivilegeCardComponent },
   {
     path: 'privilege-cards',
     children: [

@@ -125,6 +125,10 @@
   height: 100%;
 }
 
-button:hover {
-  background-color: #f43838;
+.delete-button:hover {
+  background-color: #f44336;
+}
+
+.add-new-card:hover {
+  background-color: #422d9e;
 }

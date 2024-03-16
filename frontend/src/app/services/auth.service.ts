@@ -31,9 +31,9 @@ export class AuthService {
     try {
       await window.ethereum.request({ method: 'eth_requestAccounts' });
 
-      const contractAddress = await this.web3Service.deployETHContract(PrivilegeCard.abi, PrivilegeCard.bytecode);
-      if (contractAddress !== null) {
-        localStorage.setItem('contractAddress', JSON.stringify({ contractAddress }));
+      const privilegeCardAddress = await this.web3Service.deployETHContract(PrivilegeCard.abi, PrivilegeCard.bytecode);
+      if (privilegeCardAddress !== null) {
+        localStorage.setItem('contractAddresses', JSON.stringify({ privilegeCardAddress }));
         localStorage.setItem('contractABI', JSON.stringify(PrivilegeCard.abi))
         this.router.navigate(['/']);
       }

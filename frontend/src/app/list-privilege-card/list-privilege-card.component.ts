@@ -14,6 +14,7 @@ import { AdminPrivilegeCardService } from '../services/admin-privilege-card.serv
 export class PrivilegeCardListComponent implements OnInit {
   cards: any[] = [];
   isAdmin: boolean = false;
+  isAddingCard: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -29,13 +30,16 @@ export class PrivilegeCardListComponent implements OnInit {
       this.router.navigate(['/login']);
     } else {
       this.isAdmin = await this.adminCardsService.isAdmin();
+
       if (this.isAdmin) {
         this.router.navigate(['admin/privilege-cards/add'])
       }
+
       this.loadCards();
       this.listCardsService.cards$.subscribe(cards => {
         this.cards = cards;
       });
+      
       this.listCardsService.updateAvailableCards();
     }
   }

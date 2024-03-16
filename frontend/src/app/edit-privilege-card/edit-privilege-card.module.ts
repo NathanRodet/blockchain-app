@@ -1,22 +1,24 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PrivilegeCardListComponent } from './list-privilege-card.component';
+import { EditPrivilegeCardComponent } from './edit-privilege-card.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { EditPrivilegeCardModule } from '../edit-privilege-card/edit-privilege-card.module';
-import { EditPrivilegeCardComponent } from '../edit-privilege-card/edit-privilege-card.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
-    PrivilegeCardListComponent
+    EditPrivilegeCardComponent
   ],
   imports: [
     CommonModule,
-    EditPrivilegeCardModule,
+    FormsModule,
     MatButtonModule,
     MatCardModule,
     MatIconModule
   ],
+  exports: [
+    EditPrivilegeCardComponent
+  ]
 })
-export class ListPrivilegeCardModule { }
+export class EditPrivilegeCardModule { }

@@ -1,0 +1,27 @@
+<div class="editable-card">
+    <div class="card-header">
+        <div contenteditable="true" class="editable-label" data-placeholder="Privilege Card Image URL"
+            data-field="imageUrl" (input)="updateCardField($any($event))" (blur)="checkContentAndUpdateClass($event)">
+        </div>
+    </div>
+    <div class="card-details">
+        <div contenteditable="true" class="editable-label title-label" data-placeholder="Privilege Card Title"
+            data-field="name" (input)="updateCardField($any($event))" (blur)="checkContentAndUpdateClass($event)">
+        </div>
+        <div contenteditable="true" class="editable-label" data-placeholder="Privilege Card Description"
+            data-field="description" (input)="updateCardField($any($event))"
+            (blur)="checkContentAndUpdateClass($event)"></div>
+        <div contenteditable="true" class="editable-label" data-placeholder="Privilege Card Price" data-field="price"
+            (input)="updateCardField($any($event))" (blur)="checkContentAndUpdateClass($event)"></div>
+        <div contenteditable="true" class="editable-label" data-placeholder="Privilege Card Quantity"
+            data-field="quantity" (input)="updateCardField($any($event))" (blur)="checkContentAndUpdateClass($event)">
+        </div>
+        <div contenteditable="true" class="editable-label" data-placeholder="Privilege Card Discount Rate %"
+            data-field="discountRate" (input)="updateCardField($any($event))"
+            (blur)="checkContentAndUpdateClass($event)"></div>
+    </div>
+    <div class="card-actions">
+        <button mat-raised-button color="primary" class="save-content-button" (click)="onSave()">Save Card
+            Content</button>
+    </div>
+</div>

@@ -1,8 +1,8 @@
 export interface PrivilegeCard {
-    name: string;
-    price: string;
-    discountRate: number;
-    quantity: number;
     imageUrl: string;
+    name: string;
     description: string;
+    price: number;
+    quantity: number;
+    discountRate: number;
 }

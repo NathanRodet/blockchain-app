@@ -49,7 +49,6 @@ contract PrivilegeCard is ERC721Enumerable {
     constructor() ERC721("PrivilegeCard", "PRVC") {
         admins[msg.sender] = true;
         createCard(
-            1,
             "Gold",
             0.000000000000000007 ether,
             75,
@@ -58,7 +57,6 @@ contract PrivilegeCard is ERC721Enumerable {
             "Gold Card Description"
         );
         createCard(
-            2,
             "Silver",
             0.000000000000000005 ether,
             50,
@@ -67,7 +65,6 @@ contract PrivilegeCard is ERC721Enumerable {
             "Silver Card Description"
         );
         createCard(
-            3,
             "Bronze",
             0.000000000000000002 ether,
             25,
@@ -108,7 +105,6 @@ contract PrivilegeCard is ERC721Enumerable {
     }
 
     function createCard(
-        uint id,
         string memory name,
         uint256 price,
         uint256 discountRate,
@@ -121,6 +117,8 @@ contract PrivilegeCard is ERC721Enumerable {
             isValidDiscountPercentage(discountRate),
             "Invalid discount rate"
         );
+
+        uint id = _nextCardId;
         cards[_nextCardId] = Card(
             id,
             name,
@@ -134,33 +132,32 @@ contract PrivilegeCard is ERC721Enumerable {
         _nextCardId++;
     }
 
-function deleteCard(uint cardId) public onlyAdmin {
-    require(cardId > 0 && cardId <= _nextCardId, "Card does not exist");
-    require(cards[cardId - 1].quantity > 0, "Card already deleted");
+    function deleteCard(uint cardId) public onlyAdmin {
+        require(cardId >= 0, "Card does not exist");
+        require(cards[cardId].quantity > 0, "Card already deleted");
 
-    Card storage cardToDelete = cards[cardId - 1];
-    cardToDelete.quantity = 0;
+        Card storage cardToDelete = cards[cardId];
+        cardToDelete.quantity = 0;
 
-    if (cardId == _nextCardId) {
-        delete cards[cardId - 1];
-        _nextCardId--;
+        if (cardId == _nextCardId) {
+            delete cards[cardId];
+        }
+
+        emit CardDeleted(cardId, cardToDelete.name);
     }
 
-    emit CardDeleted(cardId, cardToDelete.name);
-}
-
     function buyCard(uint256 cardId) public payable {
-        require(cards[cardId - 1].quantity > 0, "Card is sold out");
+        // require(cards[cardId].quantity > 0, "Card is sold out");
         require(
-            msg.value >= cards[cardId - 1].price,
+            msg.value >= cards[cardId].price,
             "Ether sent is not enough"
         );
 
-        Card storage card = cards[cardId - 1];
+        Card storage card = cards[cardId];
         card.quantity = card.quantity - 1;
 
         uint256[] storage buyerCardIds = ownedCards[msg.sender];
-        buyerCardIds.push(cardId - 1);
+        buyerCardIds.push(cardId);
         ownedCardsIndex[cardId - 1] = buyerCardIds.length - 1;
 
         _safeMint(msg.sender, cardId - 1);
