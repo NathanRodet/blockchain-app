@@ -8,7 +8,6 @@ import { EditPrivilegeCardComponent } from './edit-privilege-card/edit-privilege
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
-  { path: 'test', component: EditPrivilegeCardComponent },
   {
     path: 'privilege-cards',
     children: [
