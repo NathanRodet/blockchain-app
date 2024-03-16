@@ -65,15 +65,18 @@ export class ListPrivilegeCardService {
     this.privilegeCardContract = new ethers.Contract(this.contractAddress, this.contractABI, this.provider);
     const cardsArray = await this.privilegeCardContract.getAvailableCards();
 
-    return cardsArray.map((card: any[]) => ({
-      id: Number(card[0]),
-      name: card[1],
-      price: ethers.formatEther(card[2]),
-      discountRate: Number(card[3]),
-      quantity: Number(card[4]),
-      imageUrl: card[5],
-      description: card[6]
-    }));
+    return cardsArray.map((card: any[]) => {
+      const [id, name, price, discountRate, quantity, imageUrl, description] = card;
+      return {
+        id: Number(id),
+        name: name,
+        price: ethers.formatEther(price),
+        discountRate: Number(discountRate),
+        quantity: Number(quantity),
+        imageUrl: imageUrl,
+        description: description
+      }
+    });
   }
 
   public async updateAvailableCards(): Promise<void> {
