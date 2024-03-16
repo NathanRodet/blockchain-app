@@ -1,8 +1,9 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, NgZone, Output } from '@angular/core';
 import { PrivilegeCard } from '../models/privilege-card.model';
 import { PrivilegeCardValidatorService } from '../services/validate-privilege-card.service';
 import { NotificationService } from '../services/notification.service';
 import { AdminPrivilegeCardService } from '../services/admin-privilege-card.service';
+import { ListPrivilegeCardService } from '../services/list-privilege-card.service';
 
 @Component({
   selector: 'app-edit-privilege-card',
@@ -23,6 +24,8 @@ export class EditPrivilegeCardComponent {
   constructor(
     private privilageCardValidator: PrivilegeCardValidatorService,
     private adminPrivilegeCardService: AdminPrivilegeCardService,
+    private listCardsService: ListPrivilegeCardService,
+    private ngZone: NgZone,
     private notificationService: NotificationService
   ) { }
 
@@ -45,6 +48,9 @@ export class EditPrivilegeCardComponent {
         this.cardSave.emit(this.card);
         await this.adminPrivilegeCardService.createCard(this.card);
         this.notificationService.showSuccessNotification('New privilege card added successfully.', 'Success');
+        this.ngZone.run(async () => {
+          await this.listCardsService.updateAvailableCards();
+        });
       } else {
         this.notificationService.showErrorNotification('Please check your input, some of them are empty or invalid.', 'Error');
       }

@@ -29,8 +29,8 @@ export class AdminPrivilegeCardService {
         }
 
         try {
-            const tx = await this.privilegeCardContract.addAdmin(newAdminAddress);
-            await tx.wait();
+            const transactionResponse = await this.privilegeCardContract.addAdmin(newAdminAddress);
+            await transactionResponse.wait();
             console.log(`Admin ${newAdminAddress} added successfully.`);
         } catch (error) {
             console.error(`Error adding ${newAdminAddress} as admin:`, error);
@@ -54,7 +54,8 @@ export class AdminPrivilegeCardService {
             if (!this.privilegeCardContract) {
                 throw new Error('Contract is not initialized');
             }
-            await this.privilegeCardContract.createCard(card.name, card.price, card.discountRate, card.quantity, card.imageUrl, card.description);
+            const transactionResponse = await this.privilegeCardContract.createCard(card.name, card.price, card.discountRate, card.quantity, card.imageUrl, card.description);
+            await transactionResponse.wait();
             console.log(`${card.name} card created successfully`);
         } catch (error: any) {
             console.error(`Error creating ${card.name} card:`, error);
