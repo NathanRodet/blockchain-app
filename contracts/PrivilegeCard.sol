@@ -42,11 +42,6 @@ contract PrivilegeCard is ERC721Enumerable {
     );
     event RefundIssued(address indexed buyer, uint256 amount);
 
-    // modifier onlyAdmin() {
-    //     require(admins[msg.sender], "Caller is not an admin");
-    //     _;
-    // }
-
     constructor() ERC721("PrivilegeCard", "PRVC") {
         createCard(
             "Gold",
