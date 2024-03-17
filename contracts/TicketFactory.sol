@@ -26,7 +26,7 @@ contract TicketFactory is PrivilegeCard {
     tickets[msg.sender].push(newTicket);
   }
 
-  function calculateTicketPrice(TicketType ticketType) public view onlyAdmin returns (uint256) {
+  function calculateTicketPrice(TicketType ticketType) public view returns (uint256) {
     uint256 basePrice = defaultTicketPrice[ticketType];
     uint256 discountRate = getBiggestReduction();
 
