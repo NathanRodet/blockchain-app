@@ -1,65 +1,80 @@
 // SPDX-License-Identifier: MIT 
 pragma solidity ^0.8.9;
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "./PrivilegeCard.sol";
 
 contract TicketFactory is PrivilegeCard {
+
   enum TicketType { Train, Bus, Subway }
-  mapping(TicketType => uint256) private defaultTicketPrice;
 
   struct Ticket {
     TicketType ticketType;
-    bool isUsed;
+    uint256 defaultPrice;
+    string imageUrl;
+    string description;
   }
 
-  mapping(address => Ticket[]) private tickets;
+  uint256 private _nextTicketId = 0;
+  mapping(address => Ticket[]) private ownedTickets;
+  mapping(uint256 => Ticket) private availableTickets;
 
-  event TicketPurchased(address indexed buyer, TicketType ticketType, uint256 price);
+  event TicketCreated(TicketType ticketType, uint256 price, string imageUrl, string description);
+  event ReductionCalculated(TicketType ticketType, uint256 oldPrice, uint256 newPrice, uint256 discountRate);
+  event TicketPurchased(address indexed buyer, TicketType ticketType, uint256 price, Card usedReductionCard);
 
   constructor() {
-    defaultTicketPrice[TicketType.Train] = 3;
-    defaultTicketPrice[TicketType.Bus] = 1;
-    defaultTicketPrice[TicketType.Subway] = 2;
+    createTicket(
+      TicketType.Train,
+      0.000000000000000007 ether,
+      "https://imgur.com/gallery/2i6sxXq",
+      "Train Ticket Description"
+      );
+
+    createTicket(TicketType.Bus,
+      0.000000000000000005 ether,
+      "https://imgur.com/gallery/72NIX",
+      "Bus Ticket Description"
+      );
+
+    createTicket(TicketType.Subway,
+      0.000000000000000003 ether,
+      "https://imgur.com/gallery/RTKiGZD",
+      "Subway Ticket Description"
+      );
   }
 
-  function generateTicket(TicketType ticketType) public {
-    Ticket memory newTicket = Ticket(ticketType, false);
-    tickets[msg.sender].push(newTicket);
+  function createTicket(TicketType ticketType, uint256 defaultPrice, string memory imageUrl, string memory description) private {
+    uint256 ticketId = _nextTicketId;
+
+    availableTickets[ticketId] = Ticket(ticketType, defaultPrice, imageUrl, description);
+    _nextTicketId++;
+
+    emit TicketCreated(ticketType, defaultPrice, imageUrl, description);
   }
 
-  function calculateTicketPrice(TicketType ticketType) public view returns (uint256) {
-    uint256 basePrice = defaultTicketPrice[ticketType];
-    uint256 discountRate = getBiggestReduction();
+  function _calculateTicketPrice(Ticket memory selectedTicket ) private returns (uint256) {
+    uint256 defaultPrice = selectedTicket.defaultPrice;
+    TicketType ticketType = selectedTicket.ticketType;
+    Card memory reductionCard = getCardWithBiggestReduction();
+    uint256 discountRate = reductionCard.discountRate;
+    uint256 newPrice = defaultPrice - (defaultPrice * discountRate / 100);
 
-    return basePrice - (basePrice * discountRate / 100);
+    emit ReductionCalculated(ticketType, defaultPrice, newPrice, discountRate);
+    return newPrice;
   }
 
-  function buyTicket(TicketType ticketType) public payable {
-    uint256 ticketPrice = calculateTicketPrice(ticketType);
+  function buyTicket(Ticket memory selectedTicket) public payable {
+    uint256 ticketPrice = _calculateTicketPrice(selectedTicket);
+    TicketType ticketType = selectedTicket.ticketType;
     require(ticketPrice > 0, "Ticket type not available");
-    require(msg.value >= ticketPrice, "Insufficient funds");
+    require(msg.value == ticketPrice, "Insufficient funds or incorrect price");
 
-    Ticket memory newTicket = Ticket(ticketType, false);
-    tickets[msg.sender].push(newTicket);
-
-    emit TicketPurchased(msg.sender, ticketType, ticketPrice);
+    ownedTickets[msg.sender].push(selectedTicket);
+    emit TicketPurchased(msg.sender, ticketType, ticketPrice, getCardWithBiggestReduction());
   }
 
-  function listTickets(address buyer) public view returns (Ticket[] memory) {
-    return tickets[buyer];
-  }
+  function listOwnedTickets(address buyer) public view returns (Ticket[] memory) {
 
-  function listAvailableTickets() public view returns (TicketType[] memory, uint256[] memory) {
-    TicketType[] memory availableTickets = new TicketType[](3);
-    uint256[] memory ticketPrices = new uint256[](3);
-
-    availableTickets[0] = TicketType.Train;
-    availableTickets[1] = TicketType.Bus;
-    availableTickets[2] = TicketType.Subway;
-
-    ticketPrices[0] = defaultTicketPrice[TicketType.Train];
-    ticketPrices[1] = defaultTicketPrice[TicketType.Bus];
-    ticketPrices[2] = defaultTicketPrice[TicketType.Subway];
-
-    return (availableTickets, ticketPrices);
+    return ownedTickets[buyer];
   }
 }

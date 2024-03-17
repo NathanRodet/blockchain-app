@@ -224,13 +224,15 @@ contract PrivilegeCard is ERC721Enumerable {
         emit CardTransferred(cardId, msg.sender, to);
     }
     
-    function getBiggestReduction() public view returns (uint256) {
+    function getCardWithBiggestReduction() public view returns (Card memory) {
         uint256 biggestReduction = 0;
+        uint256 cardIdWithBiggestReduction = 0;
         for (uint256 i = 1; i < _nextCardId; i++) {
             if (cards[i].discountRate > biggestReduction) {
                 biggestReduction = cards[i].discountRate;
+                cardIdWithBiggestReduction = i;
             }
         }
-        return biggestReduction;
+        return cards[cardIdWithBiggestReduction];
     }
 }
