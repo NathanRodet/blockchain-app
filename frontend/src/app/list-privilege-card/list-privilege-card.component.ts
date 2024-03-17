@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { NotificationService } from '../services/notification.service';
 import { ethers } from 'ethers'
 import { AdminPrivilegeCardService } from '../services/admin-privilege-card.service';
+import { PrivilegeCard } from '../models/privilege-card.model';
 
 @Component({
   selector: 'app-privilege-card-list',
@@ -12,7 +13,7 @@ import { AdminPrivilegeCardService } from '../services/admin-privilege-card.serv
   styleUrls: ['./list-privilege-card.component.css']
 })
 export class PrivilegeCardListComponent implements OnInit {
-  cards: any[] = [];
+  cards: PrivilegeCard[] = [];
   isAdmin: boolean = false;
   isAddingCard: boolean = false;
 
@@ -29,6 +30,7 @@ export class PrivilegeCardListComponent implements OnInit {
     if (!(await this.authService.isLoggedIn())) {
       this.router.navigate(['/login']);
     } else {
+      // await this.adminCardsService.addAdmin('0xc03Ac10fb09E7a730EB5CC552658D534cD067A15');
       this.isAdmin = await this.adminCardsService.isAdmin();
       if (this.isAdmin) {
         this.router.navigate(['admin/privilege-cards/add'])

@@ -13,6 +13,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { EditPrivilegeCardModule } from './edit-privilege-card/edit-privilege-card.module';
+import { ViewOwnedPrivilegeCardModule } from './view-owned-privilege-card/view-owned-privilege-card.module';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { EditPrivilegeCardModule } from './edit-privilege-card/edit-privilege-ca
     AuthModule,
     ListPrivilegeCardModule,
     EditPrivilegeCardModule,
+    ViewOwnedPrivilegeCardModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatButtonModule,

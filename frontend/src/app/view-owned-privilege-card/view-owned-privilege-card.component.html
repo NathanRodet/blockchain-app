@@ -1,0 +1,16 @@
+<div *ngFor="let card of cards" class="card-container">
+    <mat-card class="example-card">
+        <mat-card-content class="card-content">
+            <div class="card-details">
+                <h3>{{ card.name }}</h3>
+                <p>{{ card.description }}</p>
+                <div>Quantity: {{ card.quantity }}</div>
+                <div>Discount Rate: {{ card.discountRate }}%</div>
+            </div>
+            <div class="card-actions">
+                <button mat-raised-button color="primary">Transfer Card</button>
+            </div>
+        </mat-card-content>
+        <img src="{{ card.imageUrl }}" alt="Image of {{ card.name }}" class="card-image">
+    </mat-card>
+</div>

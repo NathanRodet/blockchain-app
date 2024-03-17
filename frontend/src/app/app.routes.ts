@@ -5,6 +5,7 @@ import { PrivilegeCardListComponent } from './list-privilege-card/list-privilege
 import { NotFoundComponent } from './not-found/not-found.component';
 import { AdminAuthGuard } from './guards/admin-auth.guard';
 import { EditPrivilegeCardComponent } from './edit-privilege-card/edit-privilege-card.component';
+import { ViewOwnedPrivilegeCardComponent } from './view-owned-privilege-card/view-owned-privilege-card.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -12,6 +13,7 @@ export const routes: Routes = [
     path: 'privilege-cards',
     children: [
       { path: 'purchase', component: PrivilegeCardListComponent },
+      { path: 'my-cards', component: ViewOwnedPrivilegeCardComponent },
       { path: '', component: NotFoundComponent },
       { path: '**', component: NotFoundComponent }
     ]

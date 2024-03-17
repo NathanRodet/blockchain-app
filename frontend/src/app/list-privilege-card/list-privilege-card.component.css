@@ -1,5 +1,5 @@
 .cards-container {
-  max-width: 1200px;
+  max-width: var(--max-width);
   margin: 40px auto;
   display: flex;
   flex-direction: column;
@@ -39,6 +39,7 @@
 .card-details {
   padding: 20px;
   text-align: center;
+  word-break: break-word;
 }
 
 .card-details h3 {

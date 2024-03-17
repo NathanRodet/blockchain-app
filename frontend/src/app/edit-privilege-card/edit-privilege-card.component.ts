@@ -12,7 +12,7 @@ import { ListPrivilegeCardService } from '../services/list-privilege-card.servic
 })
 
 export class EditPrivilegeCardComponent {
-  card: PrivilegeCard = {
+  card: PrivilegeCard | any = {
     imageUrl: '',
     name: '',
     description: '',
