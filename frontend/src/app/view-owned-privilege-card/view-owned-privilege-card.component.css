@@ -1,49 +1,56 @@
+h2 {
+    text-align: center;
+    margin: 2rem 0;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
 .card-container {
     display: flex;
     justify-content: center;
     margin-bottom: 2rem;
-  }
-  
-  .example-card {
+}
+
+.example-card {
     display: flex;
-    flex-direction: row; /* Align side by side for larger screens */
-    align-items: flex-start; /* Align items to the start of the cross axis */
-    max-width: 650px; /* Adjust the max-width as needed */
+    flex-direction: column;
+    align-items: center;
     width: 100%;
-    box-shadow: 0 6px 10px rgba(0,0,0,0.1);
+    max-width: 650px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     background-color: white;
-    overflow: hidden;
-  }
-  
-  /* Content styling */
-  .mat-card-content {
-    flex: 1; /* Allow the content to fill the space */
-    padding: 20px;
-    margin-right: auto; /* Push all content to the left */
-  }
-  
-  .card-details h3 {
-    font-weight: bold;
-    color: rgba(0,0,0,0.87);
-    margin-bottom: 0.5rem;
-  }
-  
-  .card-details p, .card-details div {
-    color: rgba(0,0,0,0.6);
-    margin-bottom: 0.25rem;
-  }
-  
-  /* Button styling */
-  .card-actions {
-    display: flex;
-    justify-content: center;
+    margin: 0 auto;
+    transition: max-width 0.3s ease-in-out;
+}
+
+.mat-card-content {
     padding: 20px;
     width: 100%;
-    order: 3; /* Ensure button is below content and image */
-  }
-  
-  button {
+}
+
+.card-details h3 {
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.87);
+    margin-bottom: 1rem;
+}
+
+.card-details p,
+.card-details div {
+    color: rgba(0, 0, 0, 0.6);
+    margin-bottom: 0.5rem;
+    white-space: pre-wrap;
+}
+
+.card-actions {
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    margin-top: auto;
+}
+
+button {
     padding: 10px 25px;
     background-color: #6200ea;
     color: white;
@@ -51,36 +58,54 @@
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s;
-  }
-  
-  button:hover {
+    margin-top: 3.8rem;
+    margin-bottom: 1rem;
+}
+
+button:hover {
     background-color: #3700b3;
-  }
-  
-  /* Image styling */
-  .card-image {
-    width: auto; /* Maintain the image's aspect ratio */
-    max-height: 200px; /* Fixed height for the image */
-    object-fit: contain; /* Ensure the image is fully visible */
-    margin-left: auto; /* Push the image to the far right */
-    border-radius: 4px; /* Slight rounding of image corners */
-    order: 2; /* Place image above the button when in column layout */
-  }
-  
-  @media (max-width: 767px) {
+}
+
+.card-image {
+    width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: 4px;
+    transition: max-height 0.3s ease-in-out;
+}
+
+@media (min-width: 768px) {
     .example-card {
-      flex-direction: column; /* Stack elements vertically on smaller screens */
+        flex-direction: row;
+        align-items: flex-start;
     }
-  
-    .mat-card-content, .card-actions {
-      order: 1; /* Reset order to default for mobile layout */
+
+    .mat-card-content {
+        flex: 1;
+        align-items: flex-start;
+        padding-right: 20px;
     }
-  
+
     .card-image {
-      width: 100%; /* Full width of the container */
-      max-height: none; /* Reset the max-height for mobile */
-      margin-top: 20px; /* Space above the image */
-      order: 2; /* Image between content and button */
+        width: auto;
+        max-width: 250px;
+        max-height: 100%;
+        margin-left: auto;
+        order: 1;
     }
-  }
-  
+
+    .card-actions {
+        order: 2;
+        width: auto;
+        justify-content: flex-start;
+        align-self: center;
+        padding: 0 20px 20px 20px;
+    }
+}
+
+.no-cards-message {
+    text-align: center;
+    margin-top: 2rem;
+    font-style: italic;
+    color: #6c757d;
+}
