@@ -30,7 +30,6 @@ export class PrivilegeCardListComponent implements OnInit {
       this.router.navigate(['/login']);
     } else {
       this.isAdmin = await this.adminCardsService.isAdmin();
-
       if (this.isAdmin) {
         this.router.navigate(['admin/privilege-cards/add'])
       }

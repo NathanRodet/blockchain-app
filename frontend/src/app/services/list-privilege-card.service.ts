@@ -27,19 +27,21 @@ export class ListPrivilegeCardService {
     this.privilegeCardContract = new ethers.Contract(this.contractAddress, this.contractABI, this.signer);
   }
 
-  public getContractAddress(): string | any {
+  public getContractAddress(): string | null {
     const contractAddressJson = localStorage.getItem('contractAddresses');
     if (!contractAddressJson) {
-      throw new Error('Contract address not found in localStorage');
+      console.error('Contract address not found in localStorage');
+      return null;
     }
     const contractAddressObject = JSON.parse(contractAddressJson);
     return contractAddressObject.privilegeCardAddress;
   }
 
-  public getContractABI(): any {
+  public getContractABI(): any | null {
     const abiFromStorage = localStorage.getItem('contractABI');
     if (!abiFromStorage) {
-      throw new Error('Contract ABI not found in localStorage');
+      console.error('Contract ABI not found in localStorage');
+      return null;
     }
     return JSON.parse(abiFromStorage);
   }

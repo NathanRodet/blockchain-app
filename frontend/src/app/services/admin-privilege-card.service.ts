@@ -41,7 +41,8 @@ export class AdminPrivilegeCardService {
     public async isAdmin(): Promise<boolean> {
         try {
             this.privilegeCardContract = new ethers.Contract(this.contractAddress, this.contractABI, this.provider);
-            return await this.privilegeCardContract.isAdmin(this.contractAddress);
+            const userAddress = localStorage.getItem('userAddress')
+            return await this.privilegeCardContract.isAdmin(userAddress);
         } catch (error) {
             console.error(`Error when displaying admin addresses:`, error);
             throw error;
