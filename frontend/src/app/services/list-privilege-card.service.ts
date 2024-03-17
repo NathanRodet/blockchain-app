@@ -7,6 +7,7 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class ListPrivilegeCardService {
+  private userAddress: string | any;
   private contractAddress: string | any;
   private contractABI: any | null;
   private signer: Signer | any;
@@ -44,6 +45,15 @@ export class ListPrivilegeCardService {
       return null;
     }
     return JSON.parse(abiFromStorage);
+  }
+
+  public getAccountAddress(): string | null {
+    const userAddress = localStorage.getItem('userAddress');
+    if (!userAddress) {
+      console.error('User Address not found in localStorage');
+      return null;
+    }
+    return userAddress;
   }
 
   public async buyCard(cardId: number, value: string): Promise<void> {
@@ -88,8 +98,6 @@ export class ListPrivilegeCardService {
   }
 
   public async getOwnedPrivilegeCards(): Promise<any[]> {
-    this.provider = this.web3Service.getETHProvider();
-    this.privilegeCardContract = new ethers.Contract(this.contractAddress, this.contractABI, this.provider);
-    return this.privilegeCardContract.getOwnedCards(this.contractAddress);
+    return this.privilegeCardContract.getOwnedCards(this.userAddress);
   }
 }

@@ -147,15 +147,17 @@ contract PrivilegeCard is ERC721Enumerable {
     }
 
     function buyCard(uint256 cardId) public payable {
-        require(cards[cardId].quantity > 0, "Card is sold out");
+        // require(cards[cardId].quantity > 0, "Card is sold out");
         require(msg.value >= cards[cardId].price, "Ether sent is not enough");
 
         Card storage card = cards[cardId];
         card.quantity = card.quantity - 1;
 
-        ownedCards[msg.sender].push(cardId);
+        uint256[] storage buyerCardIds = ownedCards[msg.sender];
+        buyerCardIds.push(cardId);
+        // ownedCardsIndex[cardId - 1] = buyerCardIds.length - 1;
 
-        _safeMint(msg.sender, cardId - 1);
+        _safeMint(msg.sender, cardId);
         emit CardBought(cardId, msg.sender, card.quantity);
 
         uint256 excessPayment = msg.value - card.price;
@@ -189,10 +191,7 @@ contract PrivilegeCard is ERC721Enumerable {
         Card[] memory cardsArray = new Card[](cardIds.length);
 
         for (uint256 i = 0; i < cardIds.length; i++) {
-            uint256 cardId = cardIds[i];
-            require(cardId > 0 && cardId <= _nextCardId, "Card ID is invalid");
-            Card storage card = cards[cardId];
-            cardsArray[i] = card;
+            cardsArray[i] = cards[cardIds[i]];
         }
 
         return cardsArray;
