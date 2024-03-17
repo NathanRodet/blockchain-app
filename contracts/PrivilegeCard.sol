@@ -21,6 +21,7 @@ contract PrivilegeCard is ERC721Enumerable {
     mapping(uint256 => Card) public cards;
     mapping(address => bool) public admins;
     address[] private adminAddresses;
+    address[] private owners;
 
     mapping(address => uint256[]) private ownedCards;
     mapping(uint256 => uint256) private ownedCardsIndex;
@@ -41,13 +42,12 @@ contract PrivilegeCard is ERC721Enumerable {
     );
     event RefundIssued(address indexed buyer, uint256 amount);
 
-    modifier onlyAdmin() {
-        require(admins[msg.sender], "Caller is not an admin");
-        _;
-    }
+    // modifier onlyAdmin() {
+    //     require(admins[msg.sender], "Caller is not an admin");
+    //     _;
+    // }
 
     constructor() ERC721("PrivilegeCard", "PRVC") {
-        admins[msg.sender] = true;
         createCard(
             "Gold",
             0.000000000000000007 ether,
@@ -74,13 +74,13 @@ contract PrivilegeCard is ERC721Enumerable {
         );
     }
 
-    function addAdmin(address admin) public onlyAdmin {
+    function addAdmin(address admin) public {
         admins[admin] = true;
         adminAddresses.push(admin);
         emit AdminAdded(admin);
     }
 
-    function removeAdmin(address admin) public onlyAdmin {
+    function removeAdmin(address admin) public {
         admins[admin] = false;
         emit AdminRemoved(admin);
     }
@@ -111,7 +111,7 @@ contract PrivilegeCard is ERC721Enumerable {
         uint256 quantity,
         string memory imageUrl,
         string memory description
-    ) public onlyAdmin {
+    ) public {
         require(quantity > 0, "Quantity must be at least 1");
         require(
             isValidDiscountPercentage(discountRate),
@@ -132,7 +132,7 @@ contract PrivilegeCard is ERC721Enumerable {
         _nextCardId++;
     }
 
-    function deleteCard(uint cardId) public onlyAdmin {
+    function deleteCard(uint cardId) public {
         require(cardId >= 0, "Card does not exist");
         require(cards[cardId].quantity > 0, "Card already deleted");
 
@@ -153,18 +153,23 @@ contract PrivilegeCard is ERC721Enumerable {
         Card storage card = cards[cardId];
         card.quantity = card.quantity - 1;
 
-        uint256[] storage buyerCardIds = ownedCards[msg.sender];
-        buyerCardIds.push(cardId);
+        //uint256[] storage buyerCardIds = ownedCards[msg.sender];
+        ownedCards[msg.sender].push(cardId);
         // ownedCardsIndex[cardId - 1] = buyerCardIds.length - 1;
 
         _safeMint(msg.sender, cardId);
         emit CardBought(cardId, msg.sender, card.quantity);
 
         uint256 excessPayment = msg.value - card.price;
+        owners.push(msg.sender);
         if (excessPayment > 0) {
             payable(msg.sender).transfer(excessPayment);
             emit RefundIssued(msg.sender, excessPayment);
         }
+    }
+
+    function getSenderAddress() public view returns (address) {
+        return msg.sender;
     }
 
     function getAvailableCards() public view returns (Card[] memory) {
@@ -184,6 +189,10 @@ contract PrivilegeCard is ERC721Enumerable {
             }
         }
         return availableCards;
+    }
+
+    function listAllCardOwners() public view returns (address[] memory) {
+        return owners;
     }
 
     function getOwnedCards(address owner) public view returns (Card[] memory) {

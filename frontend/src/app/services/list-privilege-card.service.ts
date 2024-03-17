@@ -98,6 +98,10 @@ export class ListPrivilegeCardService {
   }
 
   public async getOwnedPrivilegeCards(): Promise<any[]> {
-    return this.privilegeCardContract.getOwnedCards(this.userAddress);
+    this.userAddress = this.getAccountAddress();
+    console.log("he's the msg.sender: " + this.userAddress)
+    console.log("all owners there: " + await this.privilegeCardContract.listAllCardOwners())
+    // 0x36228a413438156582f0891E76D3C6112ECB5DEf est en réalité l'adresse du user qui achète la carte
+    return this.privilegeCardContract.getOwnedCards("0xc03Ac10fb09E7a730EB5CC552658D534cD067A15");
   }
 }
