@@ -12,11 +12,16 @@ import { ListPrivilegeCardModule } from './list-privilege-card/list-privilege-ca
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { NavBarModule } from './navbar/navbar.module';
+import { LandingPageComponent } from './landing-page/landing-page.component';
 
 @NgModule({
   declarations: [
+    
   ],
   imports: [
+    LandingPageComponent,
+    NavBarModule,
     BrowserModule,
     CommonModule,
     FormsModule,

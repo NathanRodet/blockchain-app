@@ -4,9 +4,12 @@ import { LoginComponent } from './auth/login/login.component';
 import { PrivilegeCardListComponent } from './list-privilege-card/list-privilege-card.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { AdminAuthGuard } from './guards/admin-auth.guard';
+import { LandingPageComponent } from './landing-page/landing-page.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  { path: '', component: LandingPageComponent },
+
   {
     path: 'privilege-cards',
     children: [

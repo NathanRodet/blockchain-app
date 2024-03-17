@@ -1,19 +1,18 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PrivilegeCardListComponent } from './list-privilege-card.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { NavBarModule } from '../navbar/navbar.module';
+import { NavbarComponent } from './navbar.component';
 
 @NgModule({
   declarations: [
-    PrivilegeCardListComponent
+    NavbarComponent
   ],
   imports: [
-    NavBarModule,
     CommonModule,
     MatButtonModule,
     MatCardModule,
   ],
+  exports: [NavbarComponent] 
 })
-export class ListPrivilegeCardModule { }
+export class NavBarModule { }
