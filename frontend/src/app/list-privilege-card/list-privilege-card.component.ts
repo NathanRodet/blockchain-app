@@ -30,7 +30,6 @@ export class PrivilegeCardListComponent implements OnInit {
     if (!(await this.authService.isLoggedIn())) {
       this.router.navigate(['/login']);
     } else {
-      // await this.adminCardsService.addAdmin('0xc03Ac10fb09E7a730EB5CC552658D534cD067A15');
       this.isAdmin = await this.adminCardsService.isAdmin();
       if (this.isAdmin) {
         this.router.navigate(['admin/privilege-cards/add'])
@@ -53,7 +52,6 @@ export class PrivilegeCardListComponent implements OnInit {
       const formattedEther = (price * (10 ^ 18)).toFixed(18);
       await this.listCardsService.buyCard(cardId, ethers.parseEther((formattedEther).toString()).toString());
       this.notificationService.showSuccessNotification('You have successfully purchased the card.', 'Purchase Successful');
-      console.log(await this.listCardsService.getOwnedPrivilegeCards())
 
       this.ngZone.run(async () => {
         await this.listCardsService.updateAvailableCards();

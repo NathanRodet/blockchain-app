@@ -103,7 +103,7 @@ export class ListPrivilegeCardService {
     
     this.userAddress = this.getAccountAddress();
     const cardsArray = await this.privilegeCardContract.getOwnedCards(this.userAddress);
-    console.log("Cards fetched:", cardsArray); 
+
     return cardsArray.map((card: any[]) => {
       const [id, name, price, discountRate, quantity, imageUrl, description] = card;
       return {
