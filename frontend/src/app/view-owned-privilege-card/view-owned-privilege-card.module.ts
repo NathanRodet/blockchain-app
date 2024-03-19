@@ -1,18 +1,16 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PrivilegeCardListComponent } from './list-privilege-card.component';
+import { ViewOwnedPrivilegeCardComponent } from './view-owned-privilege-card.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { NavBarModule } from '../navbar/navbar.module';
 import { MatIconModule } from '@angular/material/icon';
 import { EditPrivilegeCardModule } from '../edit-privilege-card/edit-privilege-card.module';
 
 @NgModule({
   declarations: [
-    PrivilegeCardListComponent
+    ViewOwnedPrivilegeCardComponent
   ],
   imports: [
-    NavBarModule,
     CommonModule,
     EditPrivilegeCardModule,
     MatButtonModule,
@@ -20,4 +18,4 @@ import { EditPrivilegeCardModule } from '../edit-privilege-card/edit-privilege-c
     MatIconModule
   ],
 })
-export class ListPrivilegeCardModule { }
+export class ViewOwnedPrivilegeCardModule { }

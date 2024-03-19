@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { NotificationService } from '../services/notification.service';
 import { ethers } from 'ethers'
 import { AdminPrivilegeCardService } from '../services/admin-privilege-card.service';
+import { PrivilegeCard } from '../models/privilege-card.model';
 
 @Component({
   selector: 'app-privilege-card-list',
@@ -12,7 +13,7 @@ import { AdminPrivilegeCardService } from '../services/admin-privilege-card.serv
   styleUrls: ['./list-privilege-card.component.css']
 })
 export class PrivilegeCardListComponent implements OnInit {
-  cards: any[] = [];
+  cards: PrivilegeCard[] = [];
   isAdmin: boolean = false;
   isAddingCard: boolean = false;
 
@@ -38,7 +39,6 @@ export class PrivilegeCardListComponent implements OnInit {
       this.listCardsService.cards$.subscribe(cards => {
         this.cards = cards;
       });
-      console.log('test ' + await this.listCardsService.getOwnedPrivilegeCards())
       this.listCardsService.updateAvailableCards();
     }
   }
@@ -52,7 +52,6 @@ export class PrivilegeCardListComponent implements OnInit {
       const formattedEther = (price * (10 ^ 18)).toFixed(18);
       await this.listCardsService.buyCard(cardId, ethers.parseEther((formattedEther).toString()).toString());
       this.notificationService.showSuccessNotification('You have successfully purchased the card.', 'Purchase Successful');
-      console.log('test payment' + await this.listCardsService.getOwnedPrivilegeCards())
 
       this.ngZone.run(async () => {
         await this.listCardsService.updateAvailableCards();

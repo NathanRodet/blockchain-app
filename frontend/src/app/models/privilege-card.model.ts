@@ -1,4 +1,5 @@
 export interface PrivilegeCard {
+    id: number,
     imageUrl: string;
     name: string;
     description: string;
