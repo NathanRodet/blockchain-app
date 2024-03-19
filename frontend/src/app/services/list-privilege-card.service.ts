@@ -1,15 +1,21 @@
 import { Injectable } from '@angular/core';
 import { ethers, Signer, Provider } from 'ethers';
 import { Web3Service } from './web3.service';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ListPrivilegeCardService {
+  private userAddress: string | any;
   private contractAddress: string | any;
   private contractABI: any | null;
   private signer: Signer | any;
   private privilegeCardContract: any;
+  private provider: Provider | any;
+
+  private cardsSubject = new BehaviorSubject<any[]>([]);
+  cards$ = this.cardsSubject.asObservable();
 
   constructor(private web3Service: Web3Service) {
     Promise.resolve(this.initializeContract());
@@ -22,40 +28,32 @@ export class ListPrivilegeCardService {
     this.privilegeCardContract = new ethers.Contract(this.contractAddress, this.contractABI, this.signer);
   }
 
-  public getContractAddress(): string | any {
-    const contractAddressJson = localStorage.getItem('contractAddress');
+  public getContractAddress(): string | null {
+    const contractAddressJson = localStorage.getItem('contractAddresses');
     if (!contractAddressJson) {
-      throw new Error('Contract address not found in localStorage');
+      console.error('Contract address not found in localStorage');
+      return null;
     }
     const contractAddressObject = JSON.parse(contractAddressJson);
-    return contractAddressObject.contractAddress;
+    return contractAddressObject.privilegeCardAddress;
   }
 
-  public getContractABI(): any {
+  public getContractABI(): any | null {
     const abiFromStorage = localStorage.getItem('contractABI');
     if (!abiFromStorage) {
-      throw new Error('Contract ABI not found in localStorage');
+      console.error('Contract ABI not found in localStorage');
+      return null;
     }
     return JSON.parse(abiFromStorage);
   }
 
-  public async createInitialCards(): Promise<void> {
-    if (!this.privilegeCardContract) {
-      throw new Error('Contract is not initialized');
+  public getAccountAddress(): string | null {
+    const userAddress = localStorage.getItem('userAddress');
+    if (!userAddress) {
+      console.error('User Address not found in localStorage');
+      return null;
     }
-
-    for (const card of this.getAvailableCards()) {
-      try {
-        await this.privilegeCardContract.createCard(card.name, card.price, card.discountRate, card.quantity, card.imageUrl, card.description);
-        console.log(`${card.name} card created successfully`);
-      } catch (error: any) {
-        if (error.reason.includes('revert Quantity must be at least 1')) {
-          console.error(`Error creating ${card.name} card: Quantity must be at least 1`);
-        } else {
-          console.error(`Error creating ${card.name} card:`, error);
-        }
-      }
-    }
+    return userAddress;
   }
 
   public async buyCard(cardId: number, value: string): Promise<void> {
@@ -67,21 +65,56 @@ export class ListPrivilegeCardService {
       const transactionResponse = await this.privilegeCardContract.connect(this.signer).buyCard(cardId, { value });
       await transactionResponse.wait();
       console.log(`Card with ID ${cardId} bought successfully.`);
+      await this.updateAvailableCards();
     } catch (error: any) {
       console.error(`Error buying card with ID ${cardId}:`, error);
       throw new Error(`Error buying card with ID ${cardId}`);
     }
   }
 
-  public getAvailableCards(): any[] {
-    return [
-      { id: 1, name: 'Gold', price: ethers.parseEther('0.000000000000000007'), discountRate: 75, quantity: 100, imageUrl: 'https://i.imgur.com/H9ufH3W.png', description: 'Gold Card Description' },
-      { id: 2, name: 'Silver', price: ethers.parseEther('0.000000000000000005'), discountRate: 50, quantity: 100, imageUrl: 'https://i.imgur.com/EjLJEfi.png', description: 'Silver Card Description' },
-      { id: 3, name: 'Bronze', price: ethers.parseEther('0.000000000000000002'), discountRate: 25, quantity: 100, imageUrl: 'https://i.imgur.com/OLRrRmQ.png', description: 'Bronze Card Description' },
-    ];
+  public async getAvailableCards(): Promise<any[]> {
+    this.provider = this.web3Service.getETHProvider();
+    this.privilegeCardContract = new ethers.Contract(this.contractAddress, this.contractABI, this.provider);
+    const cardsArray = await this.privilegeCardContract.getAvailableCards();
+
+    return cardsArray.map((card: any[]) => {
+      const [id, name, price, discountRate, quantity, imageUrl, description] = card;
+      return {
+        id: Number(id),
+        name: name,
+        price: ethers.formatEther(price),
+        discountRate: Number(discountRate),
+        quantity: Number(quantity),
+        imageUrl: imageUrl,
+        description: description
+      }
+    });
+  }
+
+  public async updateAvailableCards(): Promise<void> {
+    const cardsArray = await this.getAvailableCards();
+    this.cardsSubject.next(cardsArray);
   }
 
   public async getOwnedPrivilegeCards(): Promise<any[]> {
-    return this.privilegeCardContract.getOwnedCards(this.contractAddress);
+    if (!this.privilegeCardContract) {
+      await this.initializeContract();
+    }
+    
+    this.userAddress = this.getAccountAddress();
+    const cardsArray = await this.privilegeCardContract.getOwnedCards(this.userAddress);
+
+    return cardsArray.map((card: any[]) => {
+      const [id, name, price, discountRate, quantity, imageUrl, description] = card;
+      return {
+        id: Number(id),
+        name: name,
+        price: ethers.formatEther(price),
+        discountRate: Number(discountRate),
+        quantity: Number(quantity),
+        imageUrl: imageUrl,
+        description: description
+      }
+    });
   }
 }

@@ -1,0 +1,25 @@
+<h2>My Privilege Cards</h2>
+
+<div *ngIf="cards.length > 0; else noCardsTemplate">
+  <div *ngFor="let card of cards" class="card-container">
+      <mat-card class="example-card">
+          <mat-card-content class="card-content">
+              <div class="card-details">
+                  <h3>{{ card.name }}</h3>
+                  <p>{{ card.description }}</p>
+                  <div><strong>Discount Rate:</strong> {{ card.discountRate }}%</div>
+              </div>
+              <div class="card-actions">
+                  <button mat-raised-button color="primary">Transfer Card</button>
+              </div>
+          </mat-card-content>
+          <img src="{{ card.imageUrl }}" alt="Image of {{ card.name }}" class="card-image">
+      </mat-card>
+  </div>
+</div>
+
+<ng-template #noCardsTemplate>
+  <div class="no-cards-message">
+    <p>You currently do not have any privilege cards.</p>
+  </div>
+</ng-template>

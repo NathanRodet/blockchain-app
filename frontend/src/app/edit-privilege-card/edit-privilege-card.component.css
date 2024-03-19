@@ -1,0 +1,72 @@
+.editable-card {
+    border: 1px solid #dcdcdc;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 300px;
+    background-color: #fff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.editable-card .card-header,
+.editable-card .card-details,
+.editable-card .card-actions {
+    padding: 20px;
+    text-align: center;
+}
+
+.editable-card .editable-label {
+    width: calc(100% - 40px);
+    padding: 10px;
+    margin: 10px 0;
+    border-bottom: 1px solid #dcdcdc;
+    display: block;
+    min-height: 1em;
+    line-height: 1.6;
+    cursor: text;
+}
+
+.editable-card .editable-label:not(.not-empty)[data-placeholder]::before {
+    content: attr(data-placeholder);
+    color: #ccc;
+}
+
+.editable-card .editable-label.title-label {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.editable-card .card-actions button {
+    background-color: hsl(259, 94%, 45%);
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+.editable-card .card-actions button:hover {
+    background-color: #0056b3;
+}
+
+.editable-card .delete-button {
+    display: none;
+}
+
+.editable-card .editable-label:focus {
+    outline: none;
+    border-color: #0056b3;
+    border-bottom: 2px solid #0056b3;
+}
+
+.editable-card .editable-label.textarea-label {
+    height: 100px;
+    overflow: auto;
+    resize: vertical;
+}

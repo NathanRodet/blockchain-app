@@ -3,7 +3,12 @@
 <div class="cards-container" [ngStyle]="{'max-width': isAdmin ? '800px' : '1200px'}">
   <h2>Available Privilege Cards</h2>
   <mat-card *ngFor="let card of cards" class="card">
-    <img mat-card-image [src]="card.imageUrl" alt="Image de la carte">
+    <div class="card-header">
+      <img mat-card-image [src]="card.imageUrl" (error)="isImageLoaded()" alt="Privilege Card Image">
+      <button mat-icon-button *ngIf="isAdmin" class="delete-button" (click)="onDeleteCard(card.id)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
     <mat-card-content class="card-details">
       <h3>{{ card.name }}</h3>
       <p>{{ card.description }}</p>
@@ -12,8 +17,12 @@
       <p><strong>Discount Rate:</strong> {{ card.discountRate }}%</p>
     </mat-card-content>
     <mat-card-actions class="card-actions">
-      <button mat-raised-button color="primary" *ngIf="!isAdmin" (click)="purchaseCard(card.id, card.price)">Purchase</button>
+      <button mat-raised-button color="primary" *ngIf="!isAdmin && card.quantity > 0"
+        (click)="purchaseCard(card.id, card.price)">Purchase</button>
     </mat-card-actions>
   </mat-card>
-  <button mat-raised-button color="primary" *ngIf="isAdmin">Add New Privilege Card</button>
+  <app-edit-privilege-card *ngIf="isAddingCard && isAdmin"></app-edit-privilege-card>
+  <button mat-raised-button class="add-new-card" color="primary" *ngIf="isAdmin" (click)="isAddingCard = !isAddingCard">
+    {{ isAddingCard ? 'Cancel' : 'Add New Privilege Card' }}
+  </button>
 </div>
