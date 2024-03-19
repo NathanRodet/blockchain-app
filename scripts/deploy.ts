@@ -1,12 +1,17 @@
 import { ethers } from "hardhat";
-import { PrivilegeCard } from "../typechain-types";
 
 async function main() {
   const [deployer] = await ethers.getSigners();
   console.log("Deploying contracts with the account:", deployer.address);
 
-  const token: PrivilegeCard = await ethers.deployContract("PrivilegeCard");
-  console.log("Token address:", await token.getAddress());
+  const PrivilegeCardContract = await ethers.getContractFactory("PrivilegeCard");
+  const TicketFactory = await ethers.getContractFactory("TicketFactory");
+
+  const privilegeCard = await PrivilegeCardContract.deploy();
+  const ticketFactory = await TicketFactory.deploy();
+
+  console.log("PrivilegeCard contract address:", await privilegeCard.getAddress());
+  console.log("TicketFactory contract address:", await ticketFactory.getAddress());
 }
 
 main()

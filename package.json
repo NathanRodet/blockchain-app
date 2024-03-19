@@ -7,7 +7,8 @@
     "build": "npx hardhat compile",
     "deploy": "npx hardhat run scripts/deploy.ts --network ganache",
     "test": "npx hardhat test",
-    "ganache": "ganache --wallet.seed myCustomSeed"
+    "ganache": "ganache --wallet.seed myCustomSeed",
+    "local-network": "ganache -p 7545"
   },
   "keywords": [],
   "author": "",
@@ -24,7 +25,8 @@
     "typescript": "^5.3"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^5.0.2",
-    "ganache": "^7.9.2"
+    "@openzeppelin/contracts": "^5.0",
+    "ganache": "^7.9",
+    "uuid": "^9.0"
   }
 }
