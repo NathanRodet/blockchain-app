@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { PrivilegeCardListComponent } from './list-privilege-card.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { NavBarModule } from '../navbar/navbar.module';
 import { MatIconModule } from '@angular/material/icon';
 import { EditPrivilegeCardModule } from '../edit-privilege-card/edit-privilege-card.module';
 
@@ -11,6 +12,7 @@ import { EditPrivilegeCardModule } from '../edit-privilege-card/edit-privilege-c
     PrivilegeCardListComponent
   ],
   imports: [
+    NavBarModule,
     CommonModule,
     EditPrivilegeCardModule,
     MatButtonModule,

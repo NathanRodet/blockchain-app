@@ -12,13 +12,18 @@ import { ListPrivilegeCardModule } from './list-privilege-card/list-privilege-ca
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { NavBarModule } from './navbar/navbar.module';
+import { LandingPageComponent } from './landing-page/landing-page.component';
 import { EditPrivilegeCardModule } from './edit-privilege-card/edit-privilege-card.module';
 import { ViewOwnedPrivilegeCardModule } from './view-owned-privilege-card/view-owned-privilege-card.module';
 
 @NgModule({
   declarations: [
+    
   ],
   imports: [
+    LandingPageComponent,
+    NavBarModule,
     BrowserModule,
     CommonModule,
     FormsModule,
