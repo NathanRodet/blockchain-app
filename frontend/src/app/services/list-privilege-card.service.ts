@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ethers, Signer, Provider } from 'ethers';
 import { Web3Service } from './web3.service';
 import { BehaviorSubject } from 'rxjs';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +18,10 @@ export class ListPrivilegeCardService {
   private cardsSubject = new BehaviorSubject<any[]>([]);
   cards$ = this.cardsSubject.asObservable();
 
-  constructor(private web3Service: Web3Service) {
+  constructor(
+    private web3Service: Web3Service,
+    private notificationService: NotificationService
+  ) {
     Promise.resolve(this.initializeContract());
   }
 
@@ -100,7 +104,7 @@ export class ListPrivilegeCardService {
     if (!this.privilegeCardContract) {
       await this.initializeContract();
     }
-    
+
     this.userAddress = this.getAccountAddress();
     const cardsArray = await this.privilegeCardContract.getOwnedCards(this.userAddress);
 
@@ -116,5 +120,31 @@ export class ListPrivilegeCardService {
         description: description
       }
     });
+  }
+
+  public async transferCard(cardId: number, recipientAddress: string): Promise<boolean | undefined> {
+    if (!ethers.isAddress(recipientAddress)) {
+      this.notificationService.showErrorNotification('The recipient address is invalid.', 'Error');
+      return false;
+    }
+    
+    const ownedCards = await this.getOwnedPrivilegeCards();
+    const isAcquired = ownedCards.some(card => card.id == cardId);
+
+    if (!isAcquired) {
+      this.notificationService.showErrorNotification(`You don't own the card ${cardId}.`, 'Error');
+    }
+    if (recipientAddress == this.userAddress) {
+      this.notificationService.showErrorNotification('Recipient Address must be different from the sender address.', 'Error');
+    }
+    try {
+      const transactionResponse = await this.privilegeCardContract.transferCard(cardId, recipientAddress);
+      await transactionResponse.wait();
+      return true;
+    } catch (error: any) {
+      console.error(`An error occurred while transfering the card: ${error}`)
+      this.notificationService.showErrorNotification(`An error occurred while transfering the card ${cardId}.`, 'Error');
+      return false;
+    }
   }
 }

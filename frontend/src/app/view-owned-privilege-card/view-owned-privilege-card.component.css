@@ -27,6 +27,7 @@ h2 {
 .mat-card-content {
     padding: 20px;
     width: 100%;
+    flex-grow: 1; 
 }
 
 .card-details h3 {

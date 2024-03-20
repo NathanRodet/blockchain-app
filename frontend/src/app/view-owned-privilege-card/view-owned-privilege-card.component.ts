@@ -31,4 +31,7 @@ export class ViewOwnedPrivilegeCardComponent {
     this.cards = await this.listCardsService.getOwnedPrivilegeCards();
   }
 
+  public transferToPage(cardId: number): void {
+    this.router.navigate(['privilege-cards/transfer'], { queryParams: { id: cardId } });
+  }
 }
