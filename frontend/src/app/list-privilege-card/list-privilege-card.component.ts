@@ -12,6 +12,7 @@ import { PrivilegeCard } from '../models/privilege-card.model';
   templateUrl: './list-privilege-card.component.html',
   styleUrls: ['./list-privilege-card.component.css']
 })
+
 export class PrivilegeCardListComponent implements OnInit {
   cards: PrivilegeCard[] = [];
   isAdmin: boolean = false;
@@ -37,7 +38,7 @@ export class PrivilegeCardListComponent implements OnInit {
 
       this.loadCards();
       this.listCardsService.cards$.subscribe(cards => {
-        this.cards = cards;
+        this.cards = cards;[]
       });
       this.listCardsService.updateAvailableCards();
     }

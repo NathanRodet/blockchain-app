@@ -17,6 +17,9 @@ export class ListPrivilegeCardService {
   private cardsSubject = new BehaviorSubject<any[]>([]);
   cards$ = this.cardsSubject.asObservable();
 
+  private biggestDiscountCardSubject = new BehaviorSubject<any | null>(null);
+  biggestDiscountCard$ = this.biggestDiscountCardSubject.asObservable();
+
   constructor(private web3Service: Web3Service) {
     Promise.resolve(this.initializeContract());
   }
@@ -100,7 +103,7 @@ export class ListPrivilegeCardService {
     if (!this.privilegeCardContract) {
       await this.initializeContract();
     }
-    
+
     this.userAddress = this.getAccountAddress();
     const cardsArray = await this.privilegeCardContract.getOwnedCards(this.userAddress);
 
@@ -116,5 +119,28 @@ export class ListPrivilegeCardService {
         description: description
       }
     });
+  }
+
+  public async getBiggestDiscountCard(): Promise<any> {
+    if (!this.privilegeCardContract) {
+      await this.initializeContract();
+    }
+
+    const card = await this.privilegeCardContract.getCardWithBiggestReductionOwned();
+    const [id, name, price, discountRate, quantity, imageUrl, description] = card;
+    return {
+      id: Number(id),
+      name: name,
+      price: ethers.formatEther(price),
+      discountRate: Number(discountRate),
+      quantity: Number(quantity),
+      imageUrl: imageUrl,
+      description: description
+    }
+  }
+
+  public async updateBiggestDiscountCard(): Promise<void> {
+    const card = await this.getBiggestDiscountCard();
+    this.biggestDiscountCardSubject.next(card);
   }
 }

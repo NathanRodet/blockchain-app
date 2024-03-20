@@ -52,10 +52,10 @@ contract TicketFactory is PrivilegeCard {
     emit TicketCreated(ticketType, defaultPrice, imageUrl, description);
   }
 
-  function _calculateTicketPrice(Ticket memory selectedTicket ) private returns (uint256) {
+  function calculateTicketPrice(Ticket memory selectedTicket ) public returns (uint256) {
     uint256 defaultPrice = selectedTicket.defaultPrice;
     TicketType ticketType = selectedTicket.ticketType;
-    Card memory reductionCard = getCardWithBiggestReduction();
+    Card memory reductionCard = getCardWithBiggestReductionOwned();
     uint256 discountRate = reductionCard.discountRate;
     uint256 newPrice = defaultPrice - (defaultPrice * discountRate / 100);
 
@@ -64,17 +64,26 @@ contract TicketFactory is PrivilegeCard {
   }
 
   function buyTicket(Ticket memory selectedTicket) public payable {
-    uint256 ticketPrice = _calculateTicketPrice(selectedTicket);
+    uint256 ticketPrice = calculateTicketPrice(selectedTicket);
     TicketType ticketType = selectedTicket.ticketType;
     require(ticketPrice > 0, "Ticket type not available");
     require(msg.value == ticketPrice, "Insufficient funds or incorrect price");
 
     ownedTickets[msg.sender].push(selectedTicket);
-    emit TicketPurchased(msg.sender, ticketType, ticketPrice, getCardWithBiggestReduction());
+    emit TicketPurchased(msg.sender, ticketType, ticketPrice, getCardWithBiggestReductionOwned());
   }
 
   function listOwnedTickets(address buyer) public view returns (Ticket[] memory) {
 
     return ownedTickets[buyer];
   }
+
+  function listAvailableTickets() public view returns (Ticket[] memory) {
+    Ticket[] memory tickets = new Ticket[](_nextTicketId);
+    for (uint256 i = 0; i < _nextTicketId; i++) {
+      tickets[i] = availableTickets[i];
+    }
+    return tickets;
+  }
+
 }

@@ -1,1 +1,17 @@
-<p>list-tickets works!</p>
+<div class="cards-container">
+  <h2>Available Tickets</h2>
+  <mat-card *ngFor="let ticket of availableTickets" class="card">
+    <div class="card-header">
+      <img mat-card-image [src]="ticket.imageUrl" alt="Ticket">
+    </div>
+    <mat-card-content class="card-details">
+      <h3>{{ ticket.ticketType }}</h3>
+      <p>{{ ticket.description }}</p>
+      <p>Price: {{ ticket.defaultPrice }} ETH</p>
+      <p><strong>DiscountedPrice:</strong> {{ ticket.discountedPrice }} ETH</p>
+    </mat-card-content>
+    <mat-card-actions class="card-actions">
+      <button mat-raised-button color="primary" (click)="purchaseTicket(ticket)">Purchase</button>
+    </mat-card-actions>
+  </mat-card>
+</div>

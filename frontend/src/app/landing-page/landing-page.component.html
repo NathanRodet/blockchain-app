@@ -1,5 +1,5 @@
 <app-navbar></app-navbar>
-  <!--<ngx-slick-carousel class="carousel" #slickModal="slick-carousel" [config]="slideConfig">
+<!--<ngx-slick-carousel class="carousel" #slickModal="slick-carousel" [config]="slideConfig">
     @for (slide of slides; track slide.img) {
     <div ngxSlickItem class="slide">
         <img src="{{ slide.img }}" alt="" width="100%">
@@ -7,10 +7,13 @@
     }
 </ngx-slick-carousel>-->
 <div class="container">
+    <h1 class="center">Welcome to our travel agency</h1>
+    <h2>Our Ticket offers</h2>
+    <app-list-tickets></app-list-tickets>
 
     <h2 class="center space">Our privilege cards</h2>
     <p class="center">Buy our privilege cards to get up to 50% discounts on your travels !</p>
-  <!--  <div class="cards-container" [ngStyle]="{'max-width': isAdmin ? '800px' : '1200px'}">
+    <!--  <div class="cards-container" [ngStyle]="{'max-width': isAdmin ? '800px' : '1200px'}">
         <h2>Available Privilege Cards</h2>
         <mat-card *ngFor="let card of cards" class="card">
         <img mat-card-image [src]="card.imageUrl" alt="Image de la carte">
