@@ -15,13 +15,10 @@ import { ethers } from 'ethers';
 })
 
 export class ListTicketsComponent implements OnInit {
-  biggestDiscountCard: PrivilegeCard | undefined;
-  ownedTickets: Ticket[] = [];
   availableTickets: Ticket[] = [];
 
   constructor(
     private listTicketService: ListTicketsService,
-    private listCardsService: ListPrivilegeCardService,
     private notificationService: NotificationService,
     private ngZone: NgZone,
     private router: Router
@@ -30,15 +27,12 @@ export class ListTicketsComponent implements OnInit {
   ngOnInit(): void {
     // this.listTicketService.getOwnedTickets();
     this.listTicketService.getAvailableTickets();
-    this.listCardsService.getBiggestDiscountCard();
 
     // this.listTicketService.ownedTickets$.subscribe(ownedTickets => {
     //   this.ownedTickets = ownedTickets;
     // })
 
-    this.listCardsService.biggestDiscountCard$.subscribe(biggestDiscountCard => {
-      this.biggestDiscountCard = biggestDiscountCard;
-    })
+
 
     this.listTicketService.availableTickets$.subscribe(availableTickets => {
       this.availableTickets = availableTickets;

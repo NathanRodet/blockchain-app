@@ -13,15 +13,12 @@ export class ListTicketsService {
   private ticketFactoryContract: any;
   private provider: Provider | any;
 
-  private availableTicketsSubject = new BehaviorSubject<any[]>([]);
-  availableTickets$ = this.availableTicketsSubject.asObservable();
-
-  // private ownedTicketsSubject = new BehaviorSubject<any[]>([]);
-  // ownedTickets$ = this.ownedTicketsSubject.asObservable();
-
   constructor(private web3Service: Web3Service) {
     Promise.resolve(this.initializeContract());
   }
+
+  private availableTicketsSubject = new BehaviorSubject<any[]>([]);
+  availableTickets$ = this.availableTicketsSubject.asObservable();
 
   public async initializeContract(): Promise<void> {
     this.ticketFactoryContractAddresses = this.getContractAddress();
@@ -102,7 +99,7 @@ export class ListTicketsService {
       const availableTickets: Ticket[] = await this.ticketFactoryContract.getAvailableTickets();
 
       // Add discountedPrice property to each ticket
-      const ticketsWithDiscountedPrice = await Promise.all(availableTickets.map(async ticket => {
+      const ticketsWithDiscountedPrice = await Promise.all(availableTickets.map(async (ticket: Ticket) => {
         ticket = {
           ticketType: ticket.ticketType,
           defaultPrice: ticket.defaultPrice,

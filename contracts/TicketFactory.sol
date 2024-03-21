@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "./PrivilegeCard.sol";
 
 contract TicketFactory is PrivilegeCard {
-    uint256 private nonce;
 
     struct Ticket {
         uint id;
@@ -47,8 +45,6 @@ contract TicketFactory is PrivilegeCard {
             "https://i.imgur.com/HE1hW7B.jpeg",
             "Our fabulous subway ticket"
         );
-
-        nonce = 0;
     }
 
     function createTicket(
@@ -85,12 +81,9 @@ contract TicketFactory is PrivilegeCard {
             }
         }
 
-        uint256 defaultPrice = selectedTicket.defaultPrice;
-        Card memory reductionCard = getCardWithBiggestReductionOwned();
-        uint256 discountRate = reductionCard.discountRate;
-        uint256 newPrice = defaultPrice - ((defaultPrice * discountRate) / 100);
+        uint256 discount = getCardWithBiggestReductionOwned();
 
-        return newPrice;
+        return selectedTicket.defaultPrice - ((selectedTicket.defaultPrice * discount) / 100);
     }
 
     function findTicketIdByType(
@@ -137,9 +130,11 @@ contract TicketFactory is PrivilegeCard {
 
     function getAvailableTickets() public view returns (Ticket[] memory) {
         Ticket[] memory tickets = new Ticket[](_nextTicketId);
+
         for (uint256 i = 0; i < _nextTicketId; i++) {
             tickets[i] = availableTickets[i];
         }
+
         return tickets;
     }
 }
