@@ -15,7 +15,7 @@
         </p>
       </mat-card-content>
       <mat-card-actions class="card-actions">
-        <button mat-raised-button color="primary" (click)="purchaseTicket(ticket.ticketType)">Purchase</button>
+        <button mat-raised-button color="primary" *ngIf="ticket.discountedPrice !== undefined" (click)="purchaseTicket(ticket.ticketType, ticket.discountedPrice)">Purchase</button>
       </mat-card-actions>
     </mat-card>
   </div>

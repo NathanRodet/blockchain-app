@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { ListPrivilegeCardService } from '../services/list-privilege-card.service';
 import { PrivilegeCard } from '../models/privilege-card.model';
 import { Ticket } from '../models/tickets.model';
+import { ethers } from 'ethers';
 
 
 @Component({
@@ -45,9 +46,10 @@ export class ListTicketsComponent implements OnInit {
 
   }
 
-  public async purchaseTicket(ticketType: string): Promise<void> {
+  public async purchaseTicket(ticketType: string, discountedPrice: number): Promise<void> {
     try {
-      await this.listTicketService.buyTicket(ticketType);
+      const etherValue = ethers.parseEther(discountedPrice.toString());
+      await this.listTicketService.buyTicket(ticketType, etherValue);
       this.notificationService.showSuccessNotification('You have successfully purchased the card.', 'Purchase Successful');
       this.ngZone.run(async () => {
         await this.listTicketService.getAvailableTickets();

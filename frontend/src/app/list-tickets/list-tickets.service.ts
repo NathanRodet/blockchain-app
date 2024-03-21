@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Web3Service } from '../services/web3.service';
-import { ethers, Signer, Provider } from 'ethers';
+import { ethers, Signer, Provider, BigNumberish } from 'ethers';
 import { BehaviorSubject } from 'rxjs';
 import { Ticket } from '../models/tickets.model';
-import { tick } from '@angular/core/testing';
-
 @Injectable({
   providedIn: 'root'
 })
@@ -77,7 +75,7 @@ export class ListTicketsService {
   // }
 
 
-  public async buyTicket(ticketType: string): Promise<void> {
+  public async buyTicket(ticketType: string, transactionValue: ethers.BigNumberish): Promise<void> {
     this.provider = this.web3Service.getETHProvider();
     this.ticketFactoryContract = new ethers.Contract(this.ticketFactoryContract, this.ticketFactoryContractABI, this.signer);
 
@@ -86,7 +84,7 @@ export class ListTicketsService {
     }
 
     try {
-      await this.ticketFactoryContract.buyTicket(ticketType);
+      await this.ticketFactoryContract.connect(this.signer).buyTicket(ticketType, { value: transactionValue });
     } catch (error) {
       console.error('Error buying ticket', error);
     }
