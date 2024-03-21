@@ -8,6 +8,7 @@ import { LandingPageComponent } from './landing-page/landing-page.component';
 import { LoginGuard } from './guards/loginGuard';
 import { AuthGuard } from './guards/authGuard';
 import { ViewOwnedPrivilegeCardComponent } from './view-owned-privilege-card/view-owned-privilege-card.component';
+import { TransferPrivilegeCardComponent } from './transfer-privilege-card/transfer-privilege-card.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
@@ -18,9 +19,10 @@ export const routes: Routes = [
     children: [
       { path: 'purchase', component: PrivilegeCardListComponent },
       { path: '', redirectTo: 'purchase', pathMatch: 'full' },
-      { path: 'transfer-card/:id', component: NotFoundComponent },
+      { path: 'transfer', component: TransferPrivilegeCardComponent },
       { path: 'my-cards', component: ViewOwnedPrivilegeCardComponent },
       { path: '**', component: NotFoundComponent },
+
     ]
   },
   {
@@ -33,7 +35,7 @@ export const routes: Routes = [
       { path: '**', component: NotFoundComponent }
     ]
   },
-  { path: '**', component: NotFoundComponent }
+  { path: '**', component: NotFoundComponent },
 ];
 
 

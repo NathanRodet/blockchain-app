@@ -1,5 +1,6 @@
-<h2>My Privilege Cards</h2>
 
+<app-navbar></app-navbar>
+<h2>My Privilege Cards</h2>
 <div *ngIf="cards.length > 0; else noCardsTemplate">
   <div *ngFor="let card of cards" class="card-container">
       <mat-card class="example-card">
@@ -10,7 +11,7 @@
                   <div><strong>Discount Rate:</strong> {{ card.discountRate }}%</div>
               </div>
               <div class="card-actions">
-                  <button mat-raised-button color="primary">Transfer Card</button>
+                  <button mat-raised-button color="primary" (click)="transferToPage(card.id)">Transfer Card</button>
               </div>
           </mat-card-content>
           <img src="{{ card.imageUrl }}" alt="Image of {{ card.name }}" class="card-image">

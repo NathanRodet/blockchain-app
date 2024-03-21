@@ -1,0 +1,25 @@
+<div class="transfer-card-container">
+    <h2>Transfer of Privilege Card</h2>
+    <div class="horizontal-container">
+        <div class="address-container">
+            <mat-label><strong>Your Address</strong></mat-label>
+            <div class="address">
+                <p>{{ ownerAddress }}</p>
+            </div>
+        </div>
+        <div class="arrow-container">
+            <img src="../../assets/arrow-card.png" alt="to" class="arrow" />
+        </div>
+        <div class="recipient-address-container">
+            <mat-label><strong>Recipient Address</strong></mat-label>
+            <div class="address">
+                <p contenteditable="true" (input)="updateToAddress($event)"></p>
+            </div>
+        </div>
+    </div>
+    <div class="card-info">
+        <mat-label><strong>Card ID to transfer</strong></mat-label>
+        <p contenteditable="false">Card {{ cardId }}</p>
+    </div>
+    <button mat-raised-button color="primary" (click)="transferCard()">Transfer the Card</button>
+</div>

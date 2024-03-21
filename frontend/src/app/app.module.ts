@@ -16,6 +16,10 @@ import { NavBarModule } from './navbar/navbar.module';
 import { LandingPageComponent } from './landing-page/landing-page.component';
 import { EditPrivilegeCardModule } from './edit-privilege-card/edit-privilege-card.module';
 import { ViewOwnedPrivilegeCardModule } from './view-owned-privilege-card/view-owned-privilege-card.module';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { TransferPrivilegeCardComponent } from './transfer-privilege-card/transfer-privilege-card.component';
+import { TransferPrivilegeCardModule } from './transfer-privilege-card/transfer-privilege-card.module';
 
 @NgModule({
   declarations: [
@@ -31,10 +35,13 @@ import { ViewOwnedPrivilegeCardModule } from './view-owned-privilege-card/view-o
     ListPrivilegeCardModule,
     EditPrivilegeCardModule,
     ViewOwnedPrivilegeCardModule,
+    TransferPrivilegeCardModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatButtonModule,
     MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
     ToastrModule.forRoot({
         timeOut: 3000,
         positionClass: 'toast-top-right',
