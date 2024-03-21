@@ -3,6 +3,7 @@ import { Ticket } from '../models/tickets.model';
 import { Router } from '@angular/router';
 import { NotificationService } from '../services/notification.service';
 import { InventoryService } from './inventory.service';
+import { ListTicketsService } from '../list-tickets/list-tickets.service';
 
 @Component({
   selector: 'app-inventory',
@@ -13,17 +14,17 @@ export class InventoryComponent {
   ownedTickets: Ticket[] = [];
 
   constructor(
-    private inventoryService: InventoryService,
+    private listTicketsService: ListTicketsService,
     private notificationService: NotificationService,
     private ngZone: NgZone,
     private router: Router
   ) { }
 
   ngOnInit(): void {
-    this.inventoryService.getOwnedTickets();
 
-    this.inventoryService.ownedTickets$.subscribe((tickets: Ticket[]) => {
+    this.listTicketsService.ownedTickets$.subscribe((tickets: Ticket[]) => {
       this.ownedTickets = tickets;
+      console.log(this.ownedTickets);
     })
   }
 }

@@ -128,9 +128,9 @@ contract TicketFactory is PrivilegeCard {
     }
 
     function getOwnedTickets(
-        address buyer
+        address owner
     ) public view returns (Ticket[] memory) {
-        return ownedTickets[buyer];
+        return ownedTickets[owner];
     }
 
     function getAvailableTickets() public view returns (Ticket[] memory) {

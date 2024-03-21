@@ -2,8 +2,6 @@ import { Component, NgZone, OnInit } from '@angular/core';
 import { ListTicketsService } from './list-tickets.service';
 import { NotificationService } from '../services/notification.service';
 import { Router } from '@angular/router';
-import { ListPrivilegeCardService } from '../services/list-privilege-card.service';
-import { PrivilegeCard } from '../models/privilege-card.model';
 import { Ticket } from '../models/tickets.model';
 import { ethers } from 'ethers';
 

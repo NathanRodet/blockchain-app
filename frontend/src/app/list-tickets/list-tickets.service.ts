@@ -6,6 +6,7 @@ import { Ticket } from '../models/tickets.model';
 @Injectable({
   providedIn: 'root'
 })
+
 export class ListTicketsService {
   private ticketFactoryContractAddresses: string | any;
   private ticketFactoryContractABI: any | null;
@@ -17,6 +18,9 @@ export class ListTicketsService {
   constructor(private web3Service: Web3Service) {
     Promise.resolve(this.initializeContract());
   }
+
+  private ownedTicketsSubject = new BehaviorSubject<any[]>([]);
+  ownedTickets$ = this.ownedTicketsSubject.asObservable();
 
   private availableTicketsSubject = new BehaviorSubject<any[]>([]);
   availableTickets$ = this.availableTicketsSubject.asObservable();
@@ -108,10 +112,8 @@ export class ListTicketsService {
           imageUrl: ticket.imageUrl,
           description: ticket.description
         }
-        console.log(ticket.defaultPrice)
 
         const discountedPrice = await this.ticketFactoryContract.calculateTicketPrice(ticket.ticketType, this.ticketFactoryOwnerAddress);
-        console.log("discounted", discountedPrice)
 
         return {
           ...ticket,
@@ -125,4 +127,23 @@ export class ListTicketsService {
       console.error('Error updating available tickets', error);
     }
   }
+
+  public async getOwnedTickets(): Promise<void> {
+    this.provider = this.web3Service.getETHProvider();
+    this.ticketFactoryContract = new ethers.Contract(this.ticketFactoryContract, this.ticketFactoryContractABI, this.signer);
+
+    if (!this.ticketFactoryContract) {
+      throw new Error('Contract is not initialized');
+    }
+
+    try {
+      const ownedTickets: Ticket[] = await this.ticketFactoryContract.getOwnedTickets();
+      console.log(ownedTickets);
+      this.ownedTicketsSubject.next(ownedTickets);
+    } catch (error) {
+      console.error('Error getting owned tickets', error);
+    }
+  }
+
 }
+
