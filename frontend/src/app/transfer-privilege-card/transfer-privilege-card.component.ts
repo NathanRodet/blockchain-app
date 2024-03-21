@@ -43,6 +43,7 @@ export class TransferPrivilegeCardComponent implements OnInit {
       const exchangeTransaction = await this.listPrivilegeCardService.transferCard(this.cardId as number, this.toAddress as string);
       if (exchangeTransaction) {
         this.notificationService.showSuccessNotification(`The card ${this.cardId} has been transfered successfully to the ${this.toAddress} user.`, 'Success');
+        this.router.navigate(['/privilege-cards/my-cards']);
       }
     } catch (error: any) {
       this.notificationService.showErrorNotification(`An error occurred while transfering the ${this.cardId}.`, 'Error');

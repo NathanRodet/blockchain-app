@@ -52,6 +52,7 @@ export class PrivilegeCardListComponent implements OnInit {
     try {
       const formattedEther = (price * (10 ^ 18)).toFixed(18);
       await this.listCardsService.buyCard(cardId, ethers.parseEther((formattedEther).toString()).toString());
+
       this.notificationService.showSuccessNotification('You have successfully purchased the card.', 'Purchase Successful');
 
       this.ngZone.run(async () => {
