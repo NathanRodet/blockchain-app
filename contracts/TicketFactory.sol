@@ -1,80 +1,145 @@
-// SPDX-License-Identifier: MIT 
-pragma solidity ^0.8.9;
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
 import "./PrivilegeCard.sol";
 
 contract TicketFactory is PrivilegeCard {
 
-  enum TicketType { Train, Bus, Subway }
+    struct Ticket {
+        uint id;
+        string ticketType;
+        uint256 defaultPrice;
+        string imageUrl;
+        string description;
+    }
 
-  struct Ticket {
-    TicketType ticketType;
-    uint256 defaultPrice;
-    string imageUrl;
-    string description;
-  }
+    uint256 private _nextTicketId = 0;
+    mapping(address => Ticket[]) private ownedTickets;
+    mapping(uint256 => Ticket) private availableTickets;
 
-  uint256 private _nextTicketId = 0;
-  mapping(address => Ticket[]) private ownedTickets;
-  mapping(uint256 => Ticket) private availableTickets;
+    event TicketCreated(
+        string ticketType,
+        uint256 price,
+        string imageUrl,
+        string description
+    );
+    event TicketPurchased(address indexed buyer, uint256 complexId);
 
-  event TicketCreated(TicketType ticketType, uint256 price, string imageUrl, string description);
-  event ReductionCalculated(TicketType ticketType, uint256 oldPrice, uint256 newPrice, uint256 discountRate);
-  event TicketPurchased(address indexed buyer, TicketType ticketType, uint256 price, Card usedReductionCard);
+    constructor() {
+        createTicket(
+            "Train",
+            0.000000000000000005 ether,
+            "https://i.imgur.com/2i6sxXq.jpeg",
+            "Our fabulous train ticket"
+        );
 
-  constructor() {
-    createTicket(
-      TicketType.Train,
-      0.000000000000000007 ether,
-      "https://imgur.com/gallery/2i6sxXq",
-      "Train Ticket Description"
-      );
+        createTicket(
+            "Bus",
+            0.000000000000000005 ether,
+            "https://i.imgur.com/VVjFRTj.jpeg",
+            "Our fabulous bus ticket"
+        );
 
-    createTicket(TicketType.Bus,
-      0.000000000000000005 ether,
-      "https://imgur.com/gallery/72NIX",
-      "Bus Ticket Description"
-      );
+        createTicket(
+            "Subway",
+            0.000000000000000005 ether,
+            "https://i.imgur.com/HE1hW7B.jpeg",
+            "Our fabulous subway ticket"
+        );
+    }
 
-    createTicket(TicketType.Subway,
-      0.000000000000000003 ether,
-      "https://imgur.com/gallery/RTKiGZD",
-      "Subway Ticket Description"
-      );
-  }
+    function createTicket(
+        string memory ticketType,
+        uint256 defaultPrice,
+        string memory imageUrl,
+        string memory description
+    ) private {
+        uint256 ticketId = _nextTicketId;
 
-  function createTicket(TicketType ticketType, uint256 defaultPrice, string memory imageUrl, string memory description) private {
-    uint256 ticketId = _nextTicketId;
+        availableTickets[ticketId] = Ticket(
+            ticketId,
+            ticketType,
+            defaultPrice,
+            imageUrl,
+            description
+        );
+        _nextTicketId++;
 
-    availableTickets[ticketId] = Ticket(ticketType, defaultPrice, imageUrl, description);
-    _nextTicketId++;
+        emit TicketCreated(ticketType, defaultPrice, imageUrl, description);
+    }
 
-    emit TicketCreated(ticketType, defaultPrice, imageUrl, description);
-  }
+    function calculateTicketPrice(
+        string memory ticketType,
+        address owner
+    ) public view returns (uint256) {
+        Ticket memory selectedTicket;
+        for (uint256 i = 0; i < _nextTicketId; i++) {
+            if (
+                keccak256(bytes(availableTickets[i].ticketType)) ==
+                keccak256(bytes(ticketType))
+            ) {
+                selectedTicket = availableTickets[i];
+                break;
+            }
+        }
 
-  function _calculateTicketPrice(Ticket memory selectedTicket ) private returns (uint256) {
-    uint256 defaultPrice = selectedTicket.defaultPrice;
-    TicketType ticketType = selectedTicket.ticketType;
-    Card memory reductionCard = getCardWithBiggestReduction();
-    uint256 discountRate = reductionCard.discountRate;
-    uint256 newPrice = defaultPrice - (defaultPrice * discountRate / 100);
+        uint256 discountRate = getCardWithBiggestReductionOwned(owner);
 
-    emit ReductionCalculated(ticketType, defaultPrice, newPrice, discountRate);
-    return newPrice;
-  }
+        if (discountRate > 0) {
+            return selectedTicket.defaultPrice * (100 - discountRate) / 100;
+        } else {
+            return selectedTicket.defaultPrice;
+        }
+    }
 
-  function buyTicket(Ticket memory selectedTicket) public payable {
-    uint256 ticketPrice = _calculateTicketPrice(selectedTicket);
-    TicketType ticketType = selectedTicket.ticketType;
-    require(ticketPrice > 0, "Ticket type not available");
-    require(msg.value == ticketPrice, "Insufficient funds or incorrect price");
+    function findTicketIdByType(
+        string memory ticketType
+    ) private view returns (uint256) {
+        for (uint256 i = 0; i < _nextTicketId; i++) {
+            if (
+                keccak256(abi.encodePacked(availableTickets[i].ticketType)) ==
+                keccak256(abi.encodePacked(ticketType))
+            ) {
+                return i;
+            }
+        }
+        return _nextTicketId;
+    }
 
-    ownedTickets[msg.sender].push(selectedTicket);
-    emit TicketPurchased(msg.sender, ticketType, ticketPrice, getCardWithBiggestReduction());
-  }
+    function buyTicket(string memory ticketType, address owner) public payable {
+        uint256 ticketPrice = calculateTicketPrice(ticketType, owner);
 
-  function listOwnedTickets(address buyer) public view returns (Ticket[] memory) {
+        require(msg.value >= ticketPrice, "Ether sent is not enough");
 
-    return ownedTickets[buyer];
-  }
+        uint256 ticketId = findTicketIdByType(ticketType);
+        require(ticketId != _nextTicketId, "Ticket not found");
+
+        Ticket memory selectedTicket = availableTickets[ticketId];
+        ownedTickets[msg.sender].push(selectedTicket);
+
+        _safeMint(msg.sender, ticketId);
+
+        emit TicketPurchased(msg.sender, ticketId);
+
+        uint256 excessPayment = msg.value - ticketPrice;
+        if (excessPayment > 0) {
+            payable(msg.sender).transfer(excessPayment);
+            emit RefundIssued(msg.sender, excessPayment);
+        }
+    }
+
+    function getOwnedTickets(
+        address owner
+    ) public view returns (Ticket[] memory) {
+        return ownedTickets[owner];
+    }
+
+    function getAvailableTickets() public view returns (Ticket[] memory) {
+        Ticket[] memory tickets = new Ticket[](_nextTicketId);
+
+        for (uint256 i = 0; i < _nextTicketId; i++) {
+            tickets[i] = availableTickets[i];
+        }
+
+        return tickets;
+    }
 }

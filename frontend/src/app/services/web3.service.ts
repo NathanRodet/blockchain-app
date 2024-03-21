@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ethers, Signer, Contract, Provider } from 'ethers';
+import { ethers, Signer, Provider } from 'ethers';
 import { MetaMaskInpageProvider } from "@metamask/providers";
 
 declare global {

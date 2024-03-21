@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
 contract PrivilegeCard is ERC721Enumerable {
     uint256[] private safeDiscountPercentages = [25, 50, 75];
-    uint256[] private test;
 
     struct Card {
         uint id;
@@ -17,7 +16,7 @@ contract PrivilegeCard is ERC721Enumerable {
         string description;
     }
 
-    uint256 private _nextCardId = 0;
+    uint256 private _nextCardId = 1;
     mapping(uint256 => Card) public cards;
     mapping(address => bool) public admins;
     address[] private adminAddresses;
@@ -213,15 +212,18 @@ contract PrivilegeCard is ERC721Enumerable {
         emit CardTransferred(cardId, msg.sender, to);
     }
     
-    function getCardWithBiggestReduction() public view returns (Card memory) {
-        uint256 biggestReduction = 0;
-        uint256 cardIdWithBiggestReduction = 0;
-        for (uint256 i = 1; i < _nextCardId; i++) {
-            if (cards[i].discountRate > biggestReduction) {
-                biggestReduction = cards[i].discountRate;
-                cardIdWithBiggestReduction = i;
+    function getCardWithBiggestReductionOwned(address owner) public view returns (uint256) {
+        uint256 bestReductionRate = 10;
+        uint256[] storage ownedCardIds = ownedCards[owner];
+        Card[] memory cardsArray = new Card[](ownedCardIds.length);
+        
+        for (uint256 i = 0; i < ownedCardIds.length; i++) {
+            cardsArray[i] = cards[ownedCardIds[i]];
+            if (cardsArray[i].discountRate > bestReductionRate) {
+                bestReductionRate = cardsArray[i].discountRate;
             }
         }
-        return cards[cardIdWithBiggestReduction];
+
+        return bestReductionRate;
     }
 }

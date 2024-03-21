@@ -1,0 +1,28 @@
+<div class="cards-container-title">
+  <h2>Buy our tickets</h2>
+  <div class="cards-container">
+    <mat-card *ngFor="let ticket of availableTickets" class="card">
+      <div class="card-header">
+        <img mat-card-image [src]="ticket.imageUrl" alt="Ticket">
+      </div>
+      <mat-card-content class="card-details">
+        <h3>{{ ticket.ticketType }}</h3>
+        <p>{{ ticket.description }}</p>
+        <p>
+          <ng-container *ngIf="ticket.defaultPrice === ticket.discountedPrice; else bothPrices">
+            <p><strong>Price :</strong></p>
+            {{ ticket.defaultPrice }} ETH
+          </ng-container>
+          <ng-template #bothPrices>
+            <strong>Discounted Price: <s>{{ ticket.defaultPrice }}</s> ETH</strong>
+            <strong>{{ ticket.discountedPrice }} ETH</strong>
+          </ng-template>
+        </p>
+      </mat-card-content>
+      <mat-card-actions class="card-actions">
+        <button mat-raised-button color="primary" *ngIf="ticket.discountedPrice !== undefined"
+          (click)="purchaseTicket(ticket.ticketType, ticket.discountedPrice)">Purchase</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>
