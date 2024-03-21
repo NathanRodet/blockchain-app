@@ -1,12 +1,6 @@
-export enum TicketType {
-  Train,
-  Bus,
-  Subway
-}
-
 export interface Ticket {
-  ticketType: TicketType;
-  defaultPrice: number;
+  ticketType: string;
+  defaultPrice: number | string;
   imageUrl: string;
   description: string;
   discountedPrice?: number;

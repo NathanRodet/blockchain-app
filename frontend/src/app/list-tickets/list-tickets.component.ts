@@ -27,13 +27,13 @@ export class ListTicketsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.listTicketService.getOwnedTickets();
+    // this.listTicketService.getOwnedTickets();
     this.listTicketService.getAvailableTickets();
     this.listCardsService.getBiggestDiscountCard();
 
-    this.listTicketService.ownedTickets$.subscribe(ownedTickets => {
-      this.ownedTickets = ownedTickets;
-    })
+    // this.listTicketService.ownedTickets$.subscribe(ownedTickets => {
+    //   this.ownedTickets = ownedTickets;
+    // })
 
     this.listCardsService.biggestDiscountCard$.subscribe(biggestDiscountCard => {
       this.biggestDiscountCard = biggestDiscountCard;
@@ -45,9 +45,9 @@ export class ListTicketsComponent implements OnInit {
 
   }
 
-  public async purchaseTicket(selectedTicket: Ticket): Promise<void> {
+  public async purchaseTicket(ticketType: string): Promise<void> {
     try {
-      await this.listTicketService.buyTicket(selectedTicket);
+      await this.listTicketService.buyTicket(ticketType);
       this.notificationService.showSuccessNotification('You have successfully purchased the card.', 'Purchase Successful');
       this.ngZone.run(async () => {
         await this.listTicketService.getAvailableTickets();

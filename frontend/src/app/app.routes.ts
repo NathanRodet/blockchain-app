@@ -11,6 +11,7 @@ import { InventoryComponent } from './inventory/inventory.component';
 
 
 export const routes: Routes = [
+
   { path: 'login', component: LoginComponent },
   { path: '', component: LandingPageComponent },
 

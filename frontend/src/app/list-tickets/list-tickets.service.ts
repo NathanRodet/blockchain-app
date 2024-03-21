@@ -3,6 +3,7 @@ import { Web3Service } from '../services/web3.service';
 import { ethers, Signer, Provider } from 'ethers';
 import { BehaviorSubject } from 'rxjs';
 import { Ticket } from '../models/tickets.model';
+import { tick } from '@angular/core/testing';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +18,8 @@ export class ListTicketsService {
   private availableTicketsSubject = new BehaviorSubject<any[]>([]);
   availableTickets$ = this.availableTicketsSubject.asObservable();
 
-  private ownedTicketsSubject = new BehaviorSubject<any[]>([]);
-  ownedTickets$ = this.ownedTicketsSubject.asObservable();
+  // private ownedTicketsSubject = new BehaviorSubject<any[]>([]);
+  // ownedTickets$ = this.ownedTicketsSubject.asObservable();
 
   constructor(private web3Service: Web3Service) {
     Promise.resolve(this.initializeContract());
@@ -38,7 +39,7 @@ export class ListTicketsService {
       return null;
     }
     const contractAddressObject = JSON.parse(contractAddressJson);
-    return contractAddressObject.privilegeCardAddress;
+    return contractAddressObject.ticketFactoryAddress;
   }
 
   public getContractABI(): any | null {
@@ -59,30 +60,33 @@ export class ListTicketsService {
     return userAddress;
   }
 
-  public async getOwnedTickets(): Promise<void> {
+  // public async getOwnedTickets(): Promise<void> {
+  //   this.provider = this.web3Service.getETHProvider();
+  //   this.ticketFactoryContract = new ethers.Contract(this.ticketFactoryContract, this.ticketFactoryContractABI, this.signer);
+
+  //   if (!this.ticketFactoryContract) {
+  //     throw new Error('Contract is not initialized');
+  //   }
+
+  //   try {
+  //     const ownedTickets: Ticket[] = await this.ticketFactoryContract.getOwnedTickets();
+  //     this.ownedTicketsSubject.next(ownedTickets);
+  //   } catch (error) {
+  //     console.error('Error getting owned tickets', error);
+  //   }
+  // }
+
+
+  public async buyTicket(ticketType: string): Promise<void> {
     this.provider = this.web3Service.getETHProvider();
-    this.ticketFactoryContract = new ethers.Contract(this.ticketFactoryContract, this.ticketFactoryContractABI, this.provider);
+    this.ticketFactoryContract = new ethers.Contract(this.ticketFactoryContract, this.ticketFactoryContractABI, this.signer);
 
     if (!this.ticketFactoryContract) {
       throw new Error('Contract is not initialized');
     }
 
     try {
-      const ownedTickets: Ticket[] = await this.ticketFactoryContract.getOwnedTickets();
-      this.ownedTicketsSubject.next(ownedTickets);
-    } catch (error) {
-      console.error('Error getting owned tickets', error);
-    }
-  }
-
-
-  public async buyTicket(selectedTicket: Ticket): Promise<void> {
-    if (!this.ticketFactoryContract) {
-      throw new Error('Contract is not initialized');
-    }
-
-    try {
-      await this.ticketFactoryContract.buyTicket(selectedTicket);
+      await this.ticketFactoryContract.buyTicket(ticketType);
     } catch (error) {
       console.error('Error buying ticket', error);
     }
@@ -98,14 +102,25 @@ export class ListTicketsService {
 
     try {
       const availableTickets: Ticket[] = await this.ticketFactoryContract.getAvailableTickets();
+
       // Add discountedPrice property to each ticket
-      const ticketsWithDiscountedPrice = availableTickets.map(ticket => {
-        let discountedPrice = this.ticketFactoryContract.calculateTicketPrice(ticket);
+      const ticketsWithDiscountedPrice = await Promise.all(availableTickets.map(async ticket => {
+        ticket = {
+          ticketType: ticket.ticketType,
+          defaultPrice: ticket.defaultPrice,
+          imageUrl: ticket.imageUrl,
+          description: ticket.description
+        }
+
+        const discountedPrice = await this.ticketFactoryContract.calculateTicketPrice(ticket.ticketType);
+
         return {
           ...ticket,
-          discountedPrice: discountedPrice
+          defaultPrice: ethers.formatEther(ticket.defaultPrice),
+          discountedPrice: ethers.formatEther(discountedPrice),
         };
-      });
+
+      }));
       this.availableTicketsSubject.next(ticketsWithDiscountedPrice);
     } catch (error) {
       console.error('Error updating available tickets', error);
