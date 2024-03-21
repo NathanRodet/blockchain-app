@@ -30,7 +30,6 @@ export class ListPrivilegeCardService {
     this.contractABI = this.getContractABI();
     this.signer = await this.web3Service.getETHSigner();
     this.privilegeCardContract = new ethers.Contract(this.contractAddress, this.contractABI, this.signer);
-    console.log(this.privilegeCardContract)
   }
 
   public getContractAddress(): string | null {
@@ -128,7 +127,7 @@ export class ListPrivilegeCardService {
       this.notificationService.showErrorNotification('The recipient address is invalid.', 'Error');
       return false;
     }
-    
+
     const ownedCards = await this.getOwnedPrivilegeCards();
     const isAcquired = ownedCards.some(card => card.id == cardId);
 
