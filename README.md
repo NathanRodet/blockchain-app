@@ -21,11 +21,17 @@ Don't forget to copy one the private key as it will be required after.
 npm install ganache --global
 ganache
 ```
+In order to compile all your contract files
+
+```bash
+npm run build
+```
+
 
 Then, on a new terminal, go to the repository's root folder and run this to deploy your contract:
 
 ```bash
-npx hardhat run scripts/deploy.ts --network localhost
+npx hardhat run scripts/deploy.ts --network ganache
 ```
 
 Finally, we can run the frontend with:
@@ -47,13 +53,12 @@ Connect to your wallet or follow the instructions to create a new one.
 Click on the plugin icon then metamask to open the menu.
 Click on the vertical "...", then "settings" -> "advanced" and scroll down to set "Show test networks" to true.
 Click on the top left icon to select a network, then click "add network", then "add network manually" at the bottom of the page.
-Name it as you wish, set "http://localhost:8545" as new RPC URL, 31337 as "Chain ID" then "ETH" as the symbol.
+Name it as you wish, set "http://localhost:7545" as new RPC URL, 1337 as "Chain ID" then "ETH" as the symbol.
 
 CLick save then switch to the newly created network.
 Once you switched network, click on your account name, then add "account or hardware wallet" -> "import account" and paste the private key you copied before. You have now an account with a 1000 eth, allowing you to perform any kind of operation on our site.
 Make sure you disconnect from the previous account and are using the correct one.
 You can login following the instructions on screen.
-
 
 ## 2 - Project overview
 
