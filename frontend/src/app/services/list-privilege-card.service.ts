@@ -17,6 +17,9 @@ export class ListPrivilegeCardService {
   private cardsSubject = new BehaviorSubject<any[]>([]);
   cards$ = this.cardsSubject.asObservable();
 
+  private biggestDiscountCardSubject = new BehaviorSubject<any | null>(null);
+  biggestDiscountCard$ = this.biggestDiscountCardSubject.asObservable();
+
   constructor(private web3Service: Web3Service) {
     Promise.resolve(this.initializeContract());
   }
@@ -100,7 +103,7 @@ export class ListPrivilegeCardService {
     if (!this.privilegeCardContract) {
       await this.initializeContract();
     }
-    
+
     this.userAddress = this.getAccountAddress();
     const cardsArray = await this.privilegeCardContract.getOwnedCards(this.userAddress);
 
@@ -117,4 +120,5 @@ export class ListPrivilegeCardService {
       }
     });
   }
+
 }

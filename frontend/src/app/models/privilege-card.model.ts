@@ -7,3 +7,5 @@ export interface PrivilegeCard {
     quantity: number;
     discountRate: number;
 }
+
+

@@ -12,6 +12,7 @@ import { PrivilegeCard } from '../models/privilege-card.model';
   templateUrl: './list-privilege-card.component.html',
   styleUrls: ['./list-privilege-card.component.css']
 })
+
 export class PrivilegeCardListComponent implements OnInit {
   cards: PrivilegeCard[] = [];
   isAdmin: boolean = false;
@@ -30,6 +31,7 @@ export class PrivilegeCardListComponent implements OnInit {
     if (!(await this.authService.isLoggedIn())) {
       this.router.navigate(['/login']);
     } else {
+      await this.adminCardsService.addAdmin('0x9737f5E41acA4E45c51E628abc41eba268556888');
       this.isAdmin = await this.adminCardsService.isAdmin();
       if (this.isAdmin) {
         this.router.navigate(['admin/privilege-cards/add'])
@@ -37,7 +39,7 @@ export class PrivilegeCardListComponent implements OnInit {
 
       this.loadCards();
       this.listCardsService.cards$.subscribe(cards => {
-        this.cards = cards;
+        this.cards = cards;[]
       });
       this.listCardsService.updateAvailableCards();
     }

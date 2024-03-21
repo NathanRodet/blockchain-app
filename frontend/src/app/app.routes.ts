@@ -7,10 +7,21 @@ import { AdminAuthGuard } from './guards/admin-auth.guard';
 import { LandingPageComponent } from './landing-page/landing-page.component';
 import { LoginGuard } from './guards/loginGuard';
 import { AuthGuard } from './guards/authGuard';
+import { EditPrivilegeCardComponent } from './edit-privilege-card/edit-privilege-card.component';
+import { ViewOwnedPrivilegeCardComponent } from './view-owned-privilege-card/view-owned-privilege-card.component';
+import { InventoryComponent } from './inventory/inventory.component';
+
 
 export const routes: Routes = [
-  { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
-  { path: '', component: LandingPageComponent},
+
+  { path: 'login', component: LoginComponent },
+  { path: '', component: LandingPageComponent },
+  {
+    path: 'inventory', component: InventoryComponent,
+    children: [
+      { path: 'transfer-card/:id', component: EditPrivilegeCardComponent },
+    ]
+  },
   {
     path: 'privilege-cards',
     canActivate: [AuthGuard],
@@ -18,6 +29,8 @@ export const routes: Routes = [
       { path: 'purchase', component: PrivilegeCardListComponent },
       { path: '', redirectTo: 'purchase', pathMatch: 'full' },
       { path: '**', component: NotFoundComponent }
+      { path: 'my-cards', component: ViewOwnedPrivilegeCardComponent },
+
     ]
   },
   {
@@ -26,7 +39,10 @@ export const routes: Routes = [
     children: [
       { path: 'privilege-cards/purchase', component: PrivilegeCardListComponent },
       { path: '', redirectTo: 'privilege-cards/purchase', pathMatch: 'full' },
+      { path: 'privilege-cards/add', component: PrivilegeCardListComponent },
       { path: '**', component: NotFoundComponent }
+
+
     ]
   },
   { path: '**', component: NotFoundComponent }
