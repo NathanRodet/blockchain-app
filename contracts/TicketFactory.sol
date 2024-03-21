@@ -27,7 +27,7 @@ contract TicketFactory is PrivilegeCard {
     constructor() {
         createTicket(
             "Train",
-            0.000000000000000007 ether,
+            0.000000000000000005 ether,
             "https://i.imgur.com/2i6sxXq.jpeg",
             "Our fabulous train ticket"
         );
@@ -41,7 +41,7 @@ contract TicketFactory is PrivilegeCard {
 
         createTicket(
             "Subway",
-            0.000000000000000003 ether,
+            0.000000000000000005 ether,
             "https://i.imgur.com/HE1hW7B.jpeg",
             "Our fabulous subway ticket"
         );
