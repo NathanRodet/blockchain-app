@@ -16,6 +16,9 @@ Once installed, let's run Hardhat's testing network:
 npx hardhat node
 ```
 Don't forget to copy one the private key as it will be required after.
+You need to download and install ganache first from this link
+https://archive.trufflesuite.com/ganache/
+
 
 ```bash
 npm install ganache --global
