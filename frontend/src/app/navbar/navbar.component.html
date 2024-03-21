@@ -1,18 +1,10 @@
-<!-- navbar.component.html -->
 <nav class="navbar">
   <div class="logo">
     <a href="/">RailRoad</a>
-    <a href="/inventory">Inventory</a>
   </div>
   <ul class="nav-links">
-    <nav>
-      <a routerLink="/inventory">Inventory</a>
-      <a routerLink="/privilege-cards/purchase">Buy privilege cards</a>
-    </nav>
-  </ul>
-  <div class="burger">
-    <div class="line1"></div>
-    <div class="line2"></div>
-    <div class="line3"></div>
+    <a *ngIf="isLoggedIn" href="/privilege-cards/purchase">Buy privilege cards</a>
+    <a *ngIf="isLoggedIn" (click)="logout()">Logout</a>
+    <a *ngIf="!isLoggedIn" href="/login">Login</a>
   </div>
 </nav>
