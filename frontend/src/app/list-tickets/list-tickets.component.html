@@ -8,10 +8,15 @@
       <mat-card-content class="card-details">
         <h3>{{ ticket.ticketType }}</h3>
         <p>{{ ticket.description }}</p>
-        <p><strong>Discounted Price:</strong></p>
         <p>
-          <span><s> {{ticket.defaultPrice }} </s>ETH </span>
-          <strong>{{ ticket.discountedPrice }} ETH</strong>
+          <ng-container *ngIf="ticket.defaultPrice === ticket.discountedPrice; else bothPrices">
+            <p><strong>Price :</strong></p>
+            {{ ticket.defaultPrice }} ETH
+          </ng-container>
+          <ng-template #bothPrices>
+            <strong>Discounted Price: <s>{{ ticket.defaultPrice }}</s> ETH</strong>
+            <strong>{{ ticket.discountedPrice }} ETH</strong>
+          </ng-template>
         </p>
       </mat-card-content>
       <mat-card-actions class="card-actions">

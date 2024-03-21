@@ -25,14 +25,7 @@ export class ListTicketsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // this.listTicketService.getOwnedTickets();
     this.listTicketService.getAvailableTickets();
-
-    // this.listTicketService.ownedTickets$.subscribe(ownedTickets => {
-    //   this.ownedTickets = ownedTickets;
-    // })
-
-
 
     this.listTicketService.availableTickets$.subscribe(availableTickets => {
       this.availableTickets = availableTickets;

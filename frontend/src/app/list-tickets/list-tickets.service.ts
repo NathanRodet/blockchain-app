@@ -9,6 +9,7 @@ import { Ticket } from '../models/tickets.model';
 export class ListTicketsService {
   private ticketFactoryContractAddresses: string | any;
   private ticketFactoryContractABI: any | null;
+  private ticketFactoryOwnerAddress: string | any;
   private signer: Signer | any;
   private ticketFactoryContract: any;
   private provider: Provider | any;
@@ -23,6 +24,7 @@ export class ListTicketsService {
   public async initializeContract(): Promise<void> {
     this.ticketFactoryContractAddresses = this.getContractAddress();
     this.ticketFactoryContractABI = this.getContractABI();
+    this.ticketFactoryOwnerAddress = this.getAccountAddress();
     this.signer = await this.web3Service.getETHSigner();
     this.ticketFactoryContract = new ethers.Contract(this.ticketFactoryContractAddresses, this.ticketFactoryContractABI, this.signer);
   }
@@ -81,7 +83,7 @@ export class ListTicketsService {
     }
 
     try {
-      await this.ticketFactoryContract.connect(this.signer).buyTicket(ticketType, { value: transactionValue });
+      await this.ticketFactoryContract.connect(this.signer).buyTicket(ticketType, this.ticketFactoryOwnerAddress, { value: transactionValue });
     } catch (error) {
       console.error('Error buying ticket', error);
     }
@@ -106,8 +108,10 @@ export class ListTicketsService {
           imageUrl: ticket.imageUrl,
           description: ticket.description
         }
+        console.log(ticket.defaultPrice)
 
-        const discountedPrice = await this.ticketFactoryContract.calculateTicketPrice(ticket.ticketType);
+        const discountedPrice = await this.ticketFactoryContract.calculateTicketPrice(ticket.ticketType, this.ticketFactoryOwnerAddress);
+        console.log("discounted", discountedPrice)
 
         return {
           ...ticket,

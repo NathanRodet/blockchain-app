@@ -68,7 +68,8 @@ contract TicketFactory is PrivilegeCard {
     }
 
     function calculateTicketPrice(
-        string memory ticketType
+        string memory ticketType,
+        address owner
     ) public view returns (uint256) {
         Ticket memory selectedTicket;
         for (uint256 i = 0; i < _nextTicketId; i++) {
@@ -81,9 +82,13 @@ contract TicketFactory is PrivilegeCard {
             }
         }
 
-        uint256 discount = getCardWithBiggestReductionOwned();
+        uint256 discountRate = getCardWithBiggestReductionOwned(owner);
 
-        return selectedTicket.defaultPrice - ((selectedTicket.defaultPrice * discount) / 100);
+        if (discountRate > 0) {
+            return selectedTicket.defaultPrice * (100 - discountRate) / 100;
+        } else {
+            return selectedTicket.defaultPrice;
+        }
     }
 
     function findTicketIdByType(
@@ -100,8 +105,8 @@ contract TicketFactory is PrivilegeCard {
         return _nextTicketId;
     }
 
-    function buyTicket(string memory ticketType) public payable {
-        uint256 ticketPrice = calculateTicketPrice(ticketType);
+    function buyTicket(string memory ticketType, address owner) public payable {
+        uint256 ticketPrice = calculateTicketPrice(ticketType, owner);
 
         require(msg.value >= ticketPrice, "Ether sent is not enough");
 
