@@ -10,7 +10,7 @@ import { ListPrivilegeCardModule } from '../list-privilege-card/list-privilege-c
   standalone: true,
   imports: [
     NavBarModule,
-    // SlickCarouselModule,
+    SlickCarouselModule,
     ListPrivilegeCardModule
   ],
 })

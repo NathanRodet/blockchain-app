@@ -1,5 +1,5 @@
 <app-navbar></app-navbar>
-<ngx-slick-carousel class="carousel" #slickModal="slick-carousel" [config]="slideConfig" style="width: 95%; margin: auto;">
+<ngx-slick-carousel class="carousel" #slickModal="slick-carousel" [config]="slideConfig">
     @for (slide of slides; track slide.img) {
     <div ngxSlickItem class="slide">
         <img src="{{ slide.img }}" alt="" width="100%">
@@ -9,7 +9,6 @@
 <div class="container">
 
     <h2 class="center space">Our privilege cards</h2>
-    <p class="center">Buy our privilege cards to get up to 50% discounts on your travels !</p>
+    <a href="/privilege-cards/purchase"><p class="center">Buy our privilege cards to get up to 50% discounts on your travels !</p></a>
 
 </div>
-<!--<app-privilege-card-list></app-privilege-card-list>-->

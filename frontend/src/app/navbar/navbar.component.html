@@ -3,10 +3,8 @@
     <a href="/">RailRoad</a>
   </div>
   <ul class="nav-links">
-    <a *ngIf="isLoggedIn" href="/privilege-cards/purchase">My inventory</a>
     <a *ngIf="isLoggedIn" href="/privilege-cards/purchase">Buy privilege cards</a>
     <a *ngIf="isLoggedIn" (click)="logout()">Logout</a>
-    <a *ngIf="isAdmin" href="#">Admin Placeholder</a>
     <a *ngIf="!isLoggedIn" href="/login">Login</a>
   </ul>
   <div class="burger">

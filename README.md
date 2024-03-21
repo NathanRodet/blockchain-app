@@ -65,6 +65,6 @@ We built the front end with angular and the back end in solidity.
 ## 3 - Features
 
 - Admin can create privilege cards (name, price image, description and avalaible in a definite amount).
-- Users can buy the cards and list the ones he bought.
+- Users can buy the cards.
 - Users can buy, list and transfer his tickets (with the greater discount provided by the privilege cards he owns).
 
