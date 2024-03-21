@@ -47,10 +47,11 @@ export class AuthService {
       return false;
     }
   }
-
+  public hasAddress() : boolean{
+    return localStorage.getItem("userAddress") !== null 
+  }
   public async isLoggedIn(): Promise<boolean> {
     let connectedAddresses: string[] = [];
-  
     if (window.ethereum) {
       try {
         const accounts = await window.ethereum.request({ method: 'eth_accounts' });
@@ -62,6 +63,8 @@ export class AuthService {
         console.error("Error fetching accounts", error);
       }
     }
+    console.log(connectedAddresses.length > 0);
+
     return connectedAddresses.length > 0;
   }
   

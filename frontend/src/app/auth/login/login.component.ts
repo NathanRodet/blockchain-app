@@ -16,7 +16,7 @@ export class LoginComponent {
   ) { }
 
   async ngOnInit(): Promise<void> {
-    if (await this.authService.isLoggedIn()) {
+    if (await this.authService.hasAddress()) {
       this.router.navigate(['/']);
     }
   }

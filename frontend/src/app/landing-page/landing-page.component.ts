@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { SlickCarouselModule } from 'ngx-slick-carousel';
 import { NavBarModule } from '../navbar/navbar.module';
+import { ListPrivilegeCardModule } from '../list-privilege-card/list-privilege-card.module';
 
 @Component({
   selector: 'app-landing-page',
@@ -9,15 +10,13 @@ import { NavBarModule } from '../navbar/navbar.module';
   standalone: true,
   imports: [
     NavBarModule,
-    SlickCarouselModule,
+    // SlickCarouselModule,
+    ListPrivilegeCardModule
   ],
 })
 export class LandingPageComponent {
   slides = [
-    {img: "http://placehold.it/350x150/000000"},
-    {img: "http://placehold.it/350x150/111111"},
-    {img: "http://placehold.it/350x150/333333"},
-    {img: "http://placehold.it/350x150/666666"}
+    {img: "https://www.emtracsystems.com/wp-content/uploads/2021/06/Banner-Red-Passenger-Train-at-Station-580.png"},
   ];
   slideConfig = {"slidesToShow": 1, "slidesToScroll": 1};
   
