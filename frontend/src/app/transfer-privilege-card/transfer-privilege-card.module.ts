@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TransferPrivilegeCardComponent } from './transfer-privilege-card.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
+import { NavBarModule } from '../navbar/navbar.module';
 
 @NgModule({
   declarations: [
@@ -10,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
   ],
   imports: [
     CommonModule,
+    NavBarModule,
     MatInputModule,
     MatButtonModule,
   ],

@@ -35,14 +35,13 @@ export class ListTicketsComponent implements OnInit {
     try {
       const etherValue = ethers.parseEther(discountedPrice.toString());
       await this.listTicketService.buyTicket(ticketType, etherValue);
-      this.notificationService.showSuccessNotification('You have successfully purchased the card.', 'Purchase Successful');
+      this.notificationService.showSuccessNotification('You have successfully purchased the ticket.', 'Purchase Successful');
       this.ngZone.run(async () => {
         await this.listTicketService.getAvailableTickets();
       });
     } catch (error) {
-      this.notificationService.showErrorNotification('There was a problem purchasing the card. Please try again.', 'Purchase Failed');
+      this.notificationService.showErrorNotification('There was a problem purchasing the ticket. Please try again.', 'Purchase Failed');
       console.error(error);
     }
   }
-
 }

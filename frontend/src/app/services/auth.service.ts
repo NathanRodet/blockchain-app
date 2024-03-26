@@ -36,8 +36,11 @@ export class AuthService {
       const ticketFactoryAddress = await this.web3Service.deployETHContract(TicketFactory.abi, TicketFactory.bytecode);
       const userAddress = await this.web3Service.getAccountAddress();
 
-      if (privilegeCardAddress !== null) {
+      if (userAddress !== null) {
         localStorage.setItem('userAddress', userAddress);
+      }
+
+      if (privilegeCardAddress !== null) {
         localStorage.setItem('contractAddresses', JSON.stringify({ privilegeCardAddress }));
         localStorage.setItem('contractABI', JSON.stringify(PrivilegeCard.abi));
       }

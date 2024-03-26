@@ -38,7 +38,7 @@ export class PrivilegeCardListComponent implements OnInit {
 
       this.loadCards();
       this.listCardsService.cards$.subscribe(cards => {
-        this.cards = cards;[]
+        this.cards = cards;
       });
       this.listCardsService.updateAvailableCards();
     }
